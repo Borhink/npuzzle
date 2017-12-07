@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/02 20:38:52 by qhonore           #+#    #+#             */
-/*   Updated: 2017/12/06 19:53:18 by qhonore          ###   ########.fr       */
+/*   Updated: 2017/12/07 11:42:27 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ public:
 
 private:
 	class Board				*_board;
-	std::vector<t_point>	_solvedMap;
+	std::vector<glm::ivec2>	_solvedMap;
 };
 
 #endif

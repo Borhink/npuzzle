@@ -6,7 +6,7 @@
 #    By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/10 16:05:27 by qhonore           #+#    #+#              #
-#    Updated: 2017/12/06 20:22:14 by qhonore          ###   ########.fr        #
+#    Updated: 2017/12/07 11:55:14 by mgallo           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,14 +23,17 @@ OBJ = $(addprefix $(OBJ_PATH),$(OBJ_NAME))
 INC = $(addprefix -I,$(INC_PATH))
 
 CC = g++
-CFLAGS = -Wall -Wextra -Werror -MMD -pedantic -Wuninitialized -std=c++11
+CFLAGS = -Wall -Wextra -Werror -MMD -pedantic -Wuninitialized -std=c++11 -I ~/.brew/include
+LIBS = `pkg-config --static --libs glm` \
+	-lm -framework OPENGL `pkg-config --static --libs glfw3` \
+	`pkg-config --static --libs glew`
 
 all:
 	@echo "\033[37;44m Make $(NAME) \033[0m"
 	@make $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(LIB) $(LIB_NAME) $^ -o $@
+	$(CC) $(CFLAGS) $(LIB) $^ -o $@
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.cpp $(DEP)
 	@mkdir -p $(OBJ_PATH)

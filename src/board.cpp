@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/02 20:43:52 by qhonore           #+#    #+#             */
-/*   Updated: 2017/12/06 20:09:30 by qhonore          ###   ########.fr       */
+/*   Updated: 2017/12/07 11:54:31 by mgallo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,15 +38,15 @@ int Board::size() const
 	return (_size);
 }
 
-void Board::printSolvedMap(std::vector<t_point> map) const
+void Board::printSolvedMap(std::vector<glm::ivec2> map) const
 {
 	for (size_t i = 0; i < map.size(); i++)
 	{
-		std::cout << i << ": " << map[i].y << ", " << map[i].x << std::endl;
+		std::cout << i << ": " << map[i][1] << ", " << map[i][0] << std::endl;
 	}
 }
 
-void Board::getSolvedPoints(std::vector<t_point> &map)
+void Board::getSolvedPoints(std::vector<glm::ivec2> &map)
 {
 	generateSolvedPoints(map, _size, 0, 0, RIGHT, 1, 1);
 }
@@ -55,7 +55,7 @@ void Board::getSolvedPoints(std::vector<t_point> &map)
 //								PRIVATES FUNCTIONS							  //
 ////////////////////////////////////////////////////////////////////////////////
 
-void Board::generateSolvedPoints(std::vector<t_point> &map, int len, int x, int y, int dir, int nb, int swap)
+void Board::generateSolvedPoints(std::vector<glm::ivec2> &map, int len, int x, int y, int dir, int nb, int swap)
 {
 	int	i = 0;
 
