@@ -3,7 +3,7 @@ OBJ_PATH = ./obj/
 INC_PATH = ./inc/
 
 SRC_NAME = main.cpp heuristic.cpp board.cpp node.cpp npuzzle.cpp\
-	renderer.cpp
+	renderer.cpp mesh.cpp shaders.cpp texture.cpp
 OBJ_NAME = $(SRC_NAME:.cpp=.o)
 NAME = npuzzle
 

@@ -1,7 +1,8 @@
 #ifndef RENDERER_H
 # define RENDERER_H
 
-# include <struct.h>
+# include "struct.h"
+# include "npuzzle.h"
 
 class Renderer {
 private:
@@ -12,6 +13,7 @@ private:
 
 public:
 	Renderer(float width, float height);
+	~Renderer();
 
 	inline GLFWwindow	*getWindow(void) { return (_window); }
 	inline glm::mat4	getProjection(void) { return (_projection); }
@@ -20,6 +22,9 @@ public:
 	Renderer			&setWidth(float width);
 	Renderer			&setHeight(float height);
 	Renderer			&setSize(float width, float height);
+	Renderer			&viewport(void);
+	void				run(void);
+	void				loop(Npuzzle *npuzzle);
 };
 
 #endif
