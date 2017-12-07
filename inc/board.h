@@ -6,7 +6,7 @@
 /*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/02 20:38:52 by qhonore           #+#    #+#             */
-/*   Updated: 2017/12/07 11:44:23 by mgallo           ###   ########.fr       */
+/*   Updated: 2017/12/07 13:32:45 by qhonore          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define BOARD_H
 
 # include <vector>
+# include <string>
 # include "struct.h"
 
 # define	DOWN	2
@@ -24,16 +25,19 @@
 class Board
 {
 public:
-	Board(size_t size);
+	Board(size_t size, std::string hash);
 	~Board();
 	int	size() const;
-	void printSolvedMap(std::vector<glm::ivec2> map) const;
+	void printMap(void) const;
 	void getSolvedPoints(std::vector<glm::ivec2> &map);
 
 private:
 	void generateSolvedPoints(std::vector<glm::ivec2> &map, int len, int x, int y, int dir, int nb, int swap);
+	void parseHash(std::string hash);
 
-	int						_size;
+	int								_size;
+	std::vector<std::vector<int>>	_map;
+	std::string						_hash;
 };
 
 #endif
