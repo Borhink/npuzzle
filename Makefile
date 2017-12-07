@@ -6,7 +6,7 @@
 #    By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/10 16:05:27 by qhonore           #+#    #+#              #
-#    Updated: 2017/12/07 11:55:14 by mgallo           ###   ########.fr        #
+#    Updated: 2017/12/07 13:42:47 by mgallo           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,8 @@ SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 INC_PATH = ./inc/
 
-SRC_NAME = main.cpp heuristic.cpp board.cpp node.cpp npuzzle.cpp
+SRC_NAME = main.cpp heuristic.cpp board.cpp node.cpp npuzzle.cpp\
+	renderer.cpp
 OBJ_NAME = $(SRC_NAME:.cpp=.o)
 NAME = npuzzle
 
