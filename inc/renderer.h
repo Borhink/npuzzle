@@ -14,7 +14,7 @@ public:
 	Renderer(float width, float height);
 
 	inline GLFWwindow	*getWindow(void) { return (_window); }
-	inline glm::mat4	*getProjection(void) { return (_projection); }
+	inline glm::mat4	getProjection(void) { return (_projection); }
 	inline float		getWidth(void) { return (_width); }
 	inline float		getHeight(void) { return (_height); }
 	Renderer			&setWidth(float width);
