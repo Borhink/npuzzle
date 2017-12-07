@@ -4,11 +4,14 @@
 #include <fstream>
 #include <string>
 #include "npuzzle.h"
+#include "astar.h"
 
 Npuzzle::Npuzzle(char *map)
 {
 	_board = parse(map);
 	_solvedMap.resize(_board->size() * _board->size(), glm::ivec2(0, 0));
+	_board->getSolvedPoints(_solvedMap);//ADDED by qhonore
+	class Astar astar(_solvedMap, _board);//ADDED by qhonore
 	_thread = new std::thread(&Npuzzle::resolve, this);
 	_thread->detach();
 }

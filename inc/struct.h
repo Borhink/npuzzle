@@ -13,4 +13,7 @@
 # include <glm/gtx/string_cast.hpp>
 # include <glm/gtx/euler_angles.hpp>
 
+# define X 0
+# define Y 1
+
 #endif
