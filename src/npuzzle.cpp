@@ -1,11 +1,15 @@
-#include "npuzzle.h"
 #include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
+#include "npuzzle.h"
 
 Npuzzle::Npuzzle(char *map)
 {
 	(void)map;
 	//PARSE MAP EASY PEASY
-	_board = new class Board(3, "1 2 3 8 6 4 0 7 5");
+	_board = parse(map);
 	_solvedMap.resize(_board->size() * _board->size(), glm::ivec2(0, 0));
 	_thread = new std::thread(&Npuzzle::resolve, this);
 	_thread->detach();
@@ -22,4 +26,35 @@ void	Npuzzle::resolve(void)
 {
 	_board->getSolvedPoints(_solvedMap);
 	_board->printMap();
+}
+
+Board	*Npuzzle::parse(char *path)
+{
+	size_t	size = 0;
+	std::ifstream fileStream(path, std::ios::in);
+	std::string lineMap("");
+	if(fileStream.is_open()){
+		std::string line = "";
+		while(getline(fileStream, line))
+		{
+			std::size_t found = line.find("#");
+			if (found > 0)
+			{
+				std::string str = line.substr(0, found);
+				if (!size)
+				{
+					size = std::stoi(str);
+					std::cout << size << std::endl;
+				}
+				else
+				{
+					
+				}
+			}
+		}
+		fileStream.close();
+	}
+	else
+		throw std::logic_error("Impossible to open map\n");
+	return (new Board(3, "1 5 7 0 6 4 3 8 2"));
 }
