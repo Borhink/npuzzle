@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2015/12/10 16:05:27 by qhonore           #+#    #+#              #
-#    Updated: 2017/12/07 13:42:47 by mgallo           ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 INC_PATH = ./inc/
@@ -30,20 +18,28 @@ LIBS = `pkg-config --static --libs glm` \
 	`pkg-config --static --libs glew`
 
 all:
-	@echo "\033[37;44m Make $(NAME) \033[0m"
+	@echo "\033[35;44m Make $(NAME) \033[0m"
 	@make $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(LIB) $^ -o $@
+	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.cpp $(DEP)
 	@mkdir -p $(OBJ_PATH)
 	$(CC) $(CFLAGS) $(INC) -o $@ -c $<
 
+install:
+	brew install glm
+	brew install glfw
+	brew install glew
+	brew install pkg-config
+
 clean:
+	@echo "\033[32;44m Make clean $(NAME) \033[0m"
 	rm -rf $(OBJ) $(OBJ_PATH)
 
 fclean: clean
+	@echo "\033[32;44m Make fclean $(NAME) \033[0m"
 	rm -f $(NAME)
 
 re: fclean all

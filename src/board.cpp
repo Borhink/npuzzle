@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   board.cpp                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qhonore <qhonore@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/12/02 20:43:52 by qhonore           #+#    #+#             */
-/*   Updated: 2017/12/07 11:54:31 by mgallo           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <iostream>
 #include "board.h"
 
@@ -25,8 +13,12 @@
 //
 // 4
 
-Board::Board(size_t size) : _size(size)
+Board::Board(size_t size, std::string hash) : _size(size), _hash(hash)
 {
+	_map.resize(_size);
+	for (size_t i = 0; i < _map.size(); i++)
+		_map[i].resize(_size, 0);
+	this->parseHash(hash);
 }
 
 Board::~Board()
@@ -38,17 +30,19 @@ int Board::size() const
 	return (_size);
 }
 
-void Board::printSolvedMap(std::vector<glm::ivec2> map) const
+void Board::printMap(void) const
 {
-	for (size_t i = 0; i < map.size(); i++)
+	for (size_t y = 0; y < _map.size(); y++)
 	{
-		std::cout << i << ": " << map[i][1] << ", " << map[i][0] << std::endl;
+		for (size_t x = 0; x < _map.size(); x++)
+			std::cout << _map[y][x] << ' ';
+		std::cout << std::endl;
 	}
 }
 
 void Board::getSolvedPoints(std::vector<glm::ivec2> &map)
 {
-	generateSolvedPoints(map, _size, 0, 0, RIGHT, 1, 1);
+	this->generateSolvedPoints(map, _size, 0, 0, RIGHT, 1, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -79,4 +73,16 @@ void Board::generateSolvedPoints(std::vector<glm::ivec2> &map, int len, int x, i
 	if (dir == UP)
 		this->generateSolvedPoints(map, len, x + 1, y + 1, RIGHT, nb, swap);
 
+}
+
+void Board::parseHash(std::string hash)
+{
+	for (size_t y = 0; y < _map.size(); y++)
+	{
+		for (size_t x = 0; x < _map.size(); x++)
+		{
+			_map[y][x] = std::stoi(hash);
+			hash = hash.substr(hash.find(" ") + 1);
+		}
+	}
 }
