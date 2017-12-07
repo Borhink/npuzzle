@@ -5,21 +5,30 @@
 Astar::Astar(std::vector<glm::ivec2> &solvedMap, class Board *board) :
 _solvedMap(solvedMap)
 {
-	opened.push(new class Node(5, board));
-	opened.push(new class Node(4, board));
-	opened.push(new class Node(4, board));
-	opened.push(new class Node(7, board));
-	while(!opened.empty())
-	{
-		std::cout << opened.top()->getCost() << std::endl;
-		opened.pop();
-	}
-	std::cout << "Manhattan distance: " << this->manhattan(opened.top()->getBoard()) << std::endl;
+	opened.push(new class Node(0, board));
+	this->solve();
 }
 
 Astar::~Astar()
 {
 
+}
+
+int Astar::solve(void)
+{
+	class Node *node;
+	class Board *board;
+
+	while(!opened.empty())
+	{
+		node = opened.top();
+		board = node->getBoard();
+		std::cout << "Manhattan distance: " << this->manhattan(board) << std::endl;
+		if (this->manhattan(board) == 0)
+			return (1);
+		opened.pop();
+	}
+	return (0);
 }
 
 int		Astar::manhattan(class Board *board)

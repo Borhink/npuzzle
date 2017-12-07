@@ -28,6 +28,7 @@ public:
 	Astar(std::vector<glm::ivec2> &solvedMap, class Board *board);
 	~Astar();
 	int	manhattan(class Board *board);
+	int solve(void);
 
 private:
 	t_node_prio_queue					opened;
