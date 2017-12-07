@@ -7,8 +7,6 @@
 
 Npuzzle::Npuzzle(char *map)
 {
-	(void)map;
-	//PARSE MAP EASY PEASY
 	_board = parse(map);
 	_solvedMap.resize(_board->size() * _board->size(), glm::ivec2(0, 0));
 	_thread = new std::thread(&Npuzzle::resolve, this);
@@ -48,7 +46,7 @@ Board	*Npuzzle::parse(char *path)
 				}
 				else
 				{
-					
+
 				}
 			}
 		}
