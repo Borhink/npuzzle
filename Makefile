@@ -19,7 +19,7 @@ LIBS = `pkg-config --static --libs glm` \
 	`pkg-config --static --libs glew`
 
 all:
-	@echo "\033[35;44m Make $(NAME) \033[0m"
+	@echo "\033[36;44m Make $(NAME) \033[0m"
 	@make $(NAME)
 
 $(NAME): $(OBJ)

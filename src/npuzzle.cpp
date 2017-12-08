@@ -16,7 +16,7 @@ Npuzzle::Npuzzle(char *map)
 Npuzzle::~Npuzzle()
 {
 	delete _thread;
-	delete _board;
+	// delete _board;
 	_solvedMap.clear();
 }
 

@@ -1,18 +1,6 @@
 #include <iostream>
 #include "board.h"
 
-// 		0	1	2	3	4
-//
-// 0	1	2	3	4
-//
-// 1	12	11	14	5
-//
-// 2	11	0	15	6
-//
-// 3	10	9	8	7
-//
-// 4
-
 Board::Board(size_t size, std::string hash) :
 _size(size),
 _hash(hash)
@@ -21,6 +9,7 @@ _hash(hash)
 	for (size_t i = 0; i < _map.size(); i++)
 		_map[i].resize(_size, 0);
 	this->parseHash(hash);
+
 }
 
 Board::Board(size_t size, std::vector<std::vector<int>> &map) :
@@ -32,6 +21,7 @@ _map(map)
 
 Board::~Board()
 {
+	_map.clear();
 }
 
 int Board::size() const

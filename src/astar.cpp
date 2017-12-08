@@ -5,13 +5,21 @@
 Astar::Astar(std::vector<glm::ivec2> &solvedMap, class Board *board) :
 _solvedMap(solvedMap)
 {
-	opened.push(new class Node(0, board));
+	int heuristic = this->manhattan(board);
+	opened.push(new class Node(0, heuristic, board));
 	this->solve();
 }
 
 Astar::~Astar()
 {
-
+	while(!opened.empty())
+	{
+		delete opened.top();
+		opened.pop();
+	}
+	for (auto it = closed.begin(); it != closed.end(); ++it)
+		delete it->second;
+	closed.clear();
 }
 
 int Astar::solve(void)
@@ -36,7 +44,8 @@ int Astar::solve(void)
 void	Astar::searchNeighbors(class Node *node, t_node_prio_queue &neighbors)
 {
 	class Board *board = node->getBoard();
-	std::vector<std::vector<int>>	&map = board->getMap();
+	class Board *newBoard;
+	std::vector<std::vector<int>> map = board->getMap();
 
 	for (int y = 0; y < board->size(); y++)
 	{
@@ -45,13 +54,33 @@ void	Astar::searchNeighbors(class Node *node, t_node_prio_queue &neighbors)
 			if (map[y][x] == 0)
 			{
 				if (x > 0)
-					neighbors.push(new class Node(node, glm::ivec2(x, y), glm::ivec2(x - 1, y)));
+				{
+					std::swap(map[y][x], map[y][x - 1]);
+					newBoard = new class Board(board->size(), map);
+					std::swap(map[y][x], map[y][x - 1]);
+					neighbors.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard));
+				}
 				if (x < board->size() - 1)
-					neighbors.push(new class Node(node, glm::ivec2(x, y), glm::ivec2(x + 1, y)));
+				{
+					std::swap(map[y][x], map[y][x + 1]);
+					newBoard = new class Board(board->size(), map);
+					std::swap(map[y][x], map[y][x + 1]);
+					neighbors.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard));
+				}
 				if (y > 0)
-					neighbors.push(new class Node(node, glm::ivec2(x, y), glm::ivec2(x, y - 1)));
+				{
+					std::swap(map[y][x], map[y - 1][x]);
+					newBoard = new class Board(board->size(), map);
+					std::swap(map[y][x], map[y - 1][x]);
+					neighbors.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard));
+				}
 				if (y < board->size() - 1)
-					neighbors.push(new class Node(node, glm::ivec2(x, y), glm::ivec2(x, y + 1)));
+				{
+					std::swap(map[y][x], map[y + 1][x]);
+					newBoard = new class Board(board->size(), map);
+					std::swap(map[y][x], map[y + 1][x]);
+					neighbors.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard));
+				}
 			}
 		}
 	}
