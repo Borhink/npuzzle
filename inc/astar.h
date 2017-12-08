@@ -27,10 +27,12 @@ class Astar
 public:
 	Astar(std::vector<glm::ivec2> &solvedMap, class Board *board);
 	~Astar();
-	int	manhattan(class Board *board);
+	int manhattan(class Board *board);
 	int solve(void);
 
 private:
+	void searchNeighbors(class Node *node, t_node_prio_queue &neighbors);
+
 	t_node_prio_queue					opened;
 	std::map<std::string, class Node*>	closed;
 	std::vector<glm::ivec2>			&_solvedMap;

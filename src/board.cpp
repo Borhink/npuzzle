@@ -13,12 +13,21 @@
 //
 // 4
 
-Board::Board(size_t size, std::string hash) : _size(size), _hash(hash)
+Board::Board(size_t size, std::string hash) :
+_size(size),
+_hash(hash)
 {
 	_map.resize(_size);
 	for (size_t i = 0; i < _map.size(); i++)
 		_map[i].resize(_size, 0);
 	this->parseHash(hash);
+}
+
+Board::Board(size_t size, std::vector<std::vector<int>> &map) :
+_size(size),
+_map(map)
+{
+	this->generateHash(map);
 }
 
 Board::~Board()
@@ -83,6 +92,19 @@ void Board::parseHash(std::string hash)
 		{
 			_map[y][x] = std::stoi(hash);
 			hash = hash.substr(hash.find(" ") + 1);
+		}
+	}
+}
+
+void Board::generateHash(std::vector<std::vector<int>> map)
+{
+	for (size_t y = 0; y < map.size(); y++)
+	{
+		for (size_t x = 0; x < map.size(); x++)
+		{
+			_hash += std::to_string(map[y][x]);
+			if (y != map.size() - 1 || x != map.size() - 1)
+				_hash += ' ';
 		}
 	}
 }
