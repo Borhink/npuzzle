@@ -33,9 +33,10 @@ public:
 private:
 	void searchNeighbors(class Node *node, t_node_prio_queue &neighbors);
 
-	t_node_prio_queue					opened;
-	std::map<std::string, class Node*>	closed;
-	std::vector<glm::ivec2>			&_solvedMap;
+	t_node_prio_queue					_opened;
+	std::map<std::string, class Node*>	_openedMap;
+	std::map<std::string, class Node*>	_closed;
+	std::vector<glm::ivec2>				&_solvedMap;
 };
 
 #endif

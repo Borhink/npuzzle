@@ -16,10 +16,11 @@ public:
 	Board(size_t size, std::string hash);
 	Board(size_t size, std::vector<std::vector<int>> &map);
 	~Board();
-	int								size() const;
-	void							printMap(void) const;
-	void							getSolvedPoints(std::vector<glm::ivec2> &map);
-	std::vector<std::vector<int>>	&getMap(void) { return (_map); }
+	int										size() const;
+	void									printMap(void) const;
+	void									getSolvedPoints(std::vector<glm::ivec2> &map);
+	inline std::vector<std::vector<int>>	&getMap(void) { return (_map); }
+	inline std::string						&getHash(void) { return (_hash); }
 private:
 	void generateSolvedPoints(std::vector<glm::ivec2> &map, int len, int x, int y, int dir, int nb, int swap);
 	void parseHash(std::string hash);

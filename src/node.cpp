@@ -16,8 +16,3 @@ Node::~Node()
 {
 	delete _board;
 }
-
-int Node::getCost(void) const
-{
-	return (_cost);
-}

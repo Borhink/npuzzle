@@ -6,20 +6,24 @@ Astar::Astar(std::vector<glm::ivec2> &solvedMap, class Board *board) :
 _solvedMap(solvedMap)
 {
 	int heuristic = this->manhattan(board);
-	opened.push(new class Node(0, heuristic, board));
+	class Node *start = new class Node(0, heuristic, board);
+	_opened.push(start);
+	_openedMap.emplace(start->getHash(), start);
+	std::cout << "_opened    : " << _opened.top() << std::endl;
+	std::cout << "_openedMap : " << _openedMap.find(start->getHash()) << std::endl;
 	this->solve();
 }
 
 Astar::~Astar()
 {
-	while(!opened.empty())
+	while(!_opened.empty())
 	{
-		delete opened.top();
-		opened.pop();
+		delete _opened.top();
+		_opened.pop();
 	}
-	for (auto it = closed.begin(); it != closed.end(); ++it)
+	for (auto it = _closed.begin(); it != _closed.end(); ++it)
 		delete it->second;
-	closed.clear();
+	_closed.clear();
 }
 
 int Astar::solve(void)
@@ -28,15 +32,15 @@ int Astar::solve(void)
 	class Board *board;
 	t_node_prio_queue neighbors;
 
-	while(!opened.empty())
+	while(!_opened.empty())
 	{
-		node = opened.top();
+		node = _opened.top();
 		board = node->getBoard();
 		this->searchNeighbors(node, neighbors);
 		std::cout << "Manhattan distance: " << this->manhattan(board) << std::endl;
 		if (this->manhattan(board) == 0)
 			return (1);
-		opened.pop();
+		_opened.pop();
 	}
 	return (0);
 }
