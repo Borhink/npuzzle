@@ -16,7 +16,7 @@ Npuzzle::Npuzzle(char *map)
 Npuzzle::~Npuzzle()
 {
 	delete _thread;
-	// delete _board;
+	delete _board;
 	_solvedMap.clear();
 }
 
@@ -24,7 +24,8 @@ void	Npuzzle::resolve(void)
 {
 	_solvedMap.resize(_board->size() * _board->size(), glm::ivec2(0, 0));
 	_board->getSolvedPoints(_solvedMap);
-	class Astar astar(_solvedMap, _board);
+	class Astar astar(_solvedMap, new class Board(_board->size(), _board->getHash()));
+	// class Astar astar(_solvedMap, _board);
 	_board->printMap();
 }
 
@@ -56,5 +57,8 @@ Board	*Npuzzle::parse(char *path)
 	}
 	else
 		throw std::logic_error("Impossible to open map\n");
-	return (new Board(3, "1 2 3 0 8 4 7 6 5"));//(new Board(3, "1 5 7 0 6 4 3 8 2"));
+	return (new Board(3, "6 3 5 2 1 7 0 8 4"));
 }
+
+//1 MOVE : "1 2 3 0 8 4 7 6 5"
+//8 MOVE : "0 2 3 1 8 4 7 6 5"

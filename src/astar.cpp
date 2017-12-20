@@ -9,8 +9,6 @@ _solvedMap(solvedMap)
 	class Node *start = new class Node(0, heuristic, board);
 	_opened.push(start);
 	_openedMap.emplace(start->getHash(), start);
-	std::cout << "_opened    : " << _opened.top() << std::endl;
-	std::cout << "_openedMap : " << _openedMap.find(start->getHash()) << std::endl;
 	this->solve();
 }
 
@@ -24,24 +22,61 @@ Astar::~Astar()
 	for (auto it = _closed.begin(); it != _closed.end(); ++it)
 		delete it->second;
 	_closed.clear();
+	_openedMap.clear();
 }
 
 int Astar::solve(void)
 {
-	class Node *node;
+	class Node *node, *open, *close;
 	class Board *board;
 	t_node_prio_queue neighbors;
+	class Node *neighbor;
+	int i = 0;
 
 	while(!_opened.empty())
 	{
 		node = _opened.top();
 		board = node->getBoard();
-		this->searchNeighbors(node, neighbors);
-		std::cout << "Manhattan distance: " << this->manhattan(board) << std::endl;
+		////////////// PRINT TEST ////////////////////////
+		std::cout << "====== Move " << i << " ======" << std::endl;
+		board->printMap();
+		std::cout << "Cost: " << node->getCost() << std::endl;
+		std::cout << "Heuristic: " << node->getHeuristic() << std::endl;
+		i++;
+		/////////////////////////////////////////////////
 		if (this->manhattan(board) == 0)
+		{
+			std::cout << "=================== END ALGO ===================\n";
 			return (1);
+		}
+		this->searchNeighbors(node, neighbors);
+		while (!neighbors.empty())
+		{
+			neighbor = neighbors.top();
+			open = this->getIfExist(_openedMap, neighbor->getHash());
+			close = this->getIfExist(_closed, neighbor->getHash());
+			if ((open && neighbor->getSum() > open->getSum()) || (close && neighbor->getSum() > close->getSum()))
+				delete neighbor;
+			else
+			{
+				if (open)
+				{
+					open->setCost(neighbor->getCost());
+					open->setHeuristic(neighbor->getHeuristic());
+					delete neighbor;
+				}
+				else
+				{
+					_opened.push(neighbor);
+					_openedMap.emplace(neighbor->getHash(), neighbor);
+				}
+			}
+			neighbors.pop();
+		}
+		_closed.emplace(node->getHash(), node);
 		_opened.pop();
 	}
+	std::cout << "=================== NO END ===================\n";
 	return (0);
 }
 
@@ -90,6 +125,13 @@ void	Astar::searchNeighbors(class Node *node, t_node_prio_queue &neighbors)
 	}
 }
 
+Node* Astar::getIfExist(std::map<std::string, class Node*> &map, std::string &key)
+{
+	if (map.find(key) != map.end())
+		return (map.at(key));
+	return (NULL);
+}
+
 int		Astar::manhattan(class Board *board)
 {
 	int dist = 0;
@@ -100,7 +142,8 @@ int		Astar::manhattan(class Board *board)
 		for (int x = 0; x < board->size(); x++)
 		{
 			int nb = map[y][x];
-			dist += abs(x - _solvedMap[nb][X]) + abs(y - _solvedMap[nb][Y]);
+			if (nb)
+				dist += abs(x - _solvedMap[nb][X]) + abs(y - _solvedMap[nb][Y]);
 		}
 	}
 	return (dist);
