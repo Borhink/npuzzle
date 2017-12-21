@@ -4,6 +4,7 @@
 # include <queue>
 # include <map>
 # include <string>
+# include <stack>
 # include "node.h"
 # include "struct.h"
 
@@ -33,6 +34,7 @@ public:
 private:
 	void searchNeighbors(class Node *node, t_node_prio_queue &neighbors);
 	class Node *getIfExist(std::map<std::string, class Node*> &map, std::string &key);
+	void restorePath(std::stack<class Node*> &path);
 
 	t_node_prio_queue					_opened;
 	std::map<std::string, class Node*>	_openedMap;

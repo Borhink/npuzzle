@@ -8,7 +8,9 @@ class Node
 {
 public:
 	Node(int cost, int heuristic, class Board *board);
+	Node(int cost, int heuristic, class Board *board, class Node *parent);
 	~Node();
+	inline class Node *getParent(void) { return (_parent); }
 	inline int getCost(void) const { return (_cost); }
 	inline void setCost(int cost) { _cost = cost; }
 	inline int getHeuristic(void) const { return (_heuristic); }
@@ -19,6 +21,7 @@ public:
 	inline std::vector<std::vector<int>> &getMap(void) { return (_board->getMap()); }
 
 private:
+	class Node	*_parent;
 	class Board	*_board;
 	int			_cost;
 	int			_heuristic;

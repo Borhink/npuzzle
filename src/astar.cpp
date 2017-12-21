@@ -9,7 +9,36 @@ _solvedMap(solvedMap)
 	class Node *start = new class Node(0, heuristic, board);
 	_opened.push(start);
 	_openedMap.emplace(start->getHash(), start);
-	this->solve();
+
+	if (this->solve())
+	{
+		std::stack<class Node*> path;
+		int i = 0;
+
+		this->restorePath(path);
+		while(!path.empty())
+		{
+			class Node *node = path.top();
+			class Board *board = node->getBoard();
+			std::cout << "====== Path " << i << " ======" << std::endl;
+			board->printMap();
+			std::cout << "Cost: " << node->getCost() << std::endl;
+			std::cout << "Heuristic: " << node->getHeuristic() << std::endl;
+			i++;
+			path.pop();
+		}
+	}
+}
+
+void Astar::restorePath(std::stack<class Node*> &path)
+{
+	class Node *node = _opened.top();
+
+	while (node)
+	{
+		path.push(node);
+		node = node->getParent();
+	}
 }
 
 Astar::~Astar()
@@ -25,30 +54,19 @@ Astar::~Astar()
 	_openedMap.clear();
 }
 
-int Astar::solve(void)
+int	Astar::solve(void)
 {
 	class Node *node, *open, *close;
 	class Board *board;
 	t_node_prio_queue neighbors;
 	class Node *neighbor;
-	int i = 0;
 
 	while(!_opened.empty())
 	{
 		node = _opened.top();
 		board = node->getBoard();
-		////////////// PRINT TEST ////////////////////////
-		std::cout << "====== Move " << i << " ======" << std::endl;
-		board->printMap();
-		std::cout << "Cost: " << node->getCost() << std::endl;
-		std::cout << "Heuristic: " << node->getHeuristic() << std::endl;
-		i++;
-		/////////////////////////////////////////////////
 		if (this->manhattan(board) == 0)
-		{
-			std::cout << "=================== END ALGO ===================\n";
 			return (1);
-		}
 		this->searchNeighbors(node, neighbors);
 		while (!neighbors.empty())
 		{
@@ -76,7 +94,6 @@ int Astar::solve(void)
 		_closed.emplace(node->getHash(), node);
 		_opened.pop();
 	}
-	std::cout << "=================== NO END ===================\n";
 	return (0);
 }
 
@@ -97,35 +114,35 @@ void	Astar::searchNeighbors(class Node *node, t_node_prio_queue &neighbors)
 					std::swap(map[y][x], map[y][x - 1]);
 					newBoard = new class Board(board->size(), map);
 					std::swap(map[y][x], map[y][x - 1]);
-					neighbors.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard));
+					neighbors.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard, node));
 				}
 				if (x < board->size() - 1)
 				{
 					std::swap(map[y][x], map[y][x + 1]);
 					newBoard = new class Board(board->size(), map);
 					std::swap(map[y][x], map[y][x + 1]);
-					neighbors.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard));
+					neighbors.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard, node));
 				}
 				if (y > 0)
 				{
 					std::swap(map[y][x], map[y - 1][x]);
 					newBoard = new class Board(board->size(), map);
 					std::swap(map[y][x], map[y - 1][x]);
-					neighbors.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard));
+					neighbors.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard, node));
 				}
 				if (y < board->size() - 1)
 				{
 					std::swap(map[y][x], map[y + 1][x]);
 					newBoard = new class Board(board->size(), map);
 					std::swap(map[y][x], map[y + 1][x]);
-					neighbors.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard));
+					neighbors.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard, node));
 				}
 			}
 		}
 	}
 }
 
-Node* Astar::getIfExist(std::map<std::string, class Node*> &map, std::string &key)
+class Node* Astar::getIfExist(std::map<std::string, class Node*> &map, std::string &key)
 {
 	if (map.find(key) != map.end())
 		return (map.at(key));

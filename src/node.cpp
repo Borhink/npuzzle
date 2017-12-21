@@ -3,13 +3,19 @@
 #include <iostream>
 
 Node::Node(int cost, int heuristic, class Board *board):
+_parent(NULL),
 _board(board),
 _cost(cost),
 _heuristic(heuristic)
 {
-	// _board->printMap();
-	// std::cout << "_cost: " << _cost << std::endl;
-	// std::cout << "_heuristic: " << _heuristic << std::endl;
+}
+
+Node::Node(int cost, int heuristic, class Board *board, class Node *parent):
+_parent(parent),
+_board(board),
+_cost(cost),
+_heuristic(heuristic)
+{
 }
 
 Node::~Node()
