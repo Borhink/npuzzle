@@ -15,7 +15,8 @@ class NodeCompare
 public:
 	bool operator() (const class Node *n1, const class Node *n2)
 	{
-		if (n1->getSum() > n2->getSum())
+		if (n1->getHeuristic() > n2->getHeuristic()
+		|| (n1->getHeuristic() == n2->getHeuristic() && n1->getCost() > n2->getCost()))
 			return (true);
 		return (false);
 	}
@@ -32,7 +33,7 @@ public:
 	int solve(void);
 
 private:
-	void searchNeighbors(class Node *node, t_node_prio_queue &neighbors);
+	void searchChildren(class Node *node, t_node_prio_queue &children);
 	class Node *getIfExist(std::map<std::string, class Node*> &map, std::string &key);
 	void restorePath(std::stack<class Node*> &path);
 

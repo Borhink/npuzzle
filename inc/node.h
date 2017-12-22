@@ -11,6 +11,7 @@ public:
 	Node(int cost, int heuristic, class Board *board, class Node *parent);
 	~Node();
 	inline class Node *getParent(void) { return (_parent); }
+	inline void setParent(class Node *parent) { _parent = parent; }
 	inline int getCost(void) const { return (_cost); }
 	inline void setCost(int cost) { _cost = cost; }
 	inline int getHeuristic(void) const { return (_heuristic); }
