@@ -36,11 +36,14 @@ private:
 	void searchChildren(class Node *node, t_node_prio_queue &children);
 	class Node *getIfExist(std::map<std::string, class Node*> &map, std::string &key);
 	void restorePath(std::stack<class Node*> &path);
+	bool checkMoveValidity(class Board *b1, class Board *b2);
 
 	t_node_prio_queue					_opened;
 	std::map<std::string, class Node*>	_openedMap;
 	std::map<std::string, class Node*>	_closed;
 	std::vector<glm::ivec2>				&_solvedMap;
+	unsigned long						_timeComplexity;
+	unsigned long						_sizeComplexity;
 };
 
 #endif

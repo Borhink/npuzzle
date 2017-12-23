@@ -56,7 +56,7 @@ Board	*Npuzzle::parse(char *path)
 	}
 	else
 		throw std::logic_error("Impossible to open map\n");
-	return (new Board(4, "1 12 11 10 2 13 0 9 3 14 15 8 4 5 6 7"));
+	return (new Board(4, "0 15 14 13 5 4 3 12 6 2 1 11 7 8 9 10"));
 }
 
 //1 MOVE :   "1 2 3 0 8 4 7 6 5"
