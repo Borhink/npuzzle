@@ -2,12 +2,15 @@
 #include "astar.h"
 #include "board.h"
 
+#include <unistd.h>
+
 Astar::Astar(std::vector<glm::ivec2> &solvedMap, class Board *board) :
 _solvedMap(solvedMap),
 _timeComplexity(0),
-_sizeComplexity(1)
+_sizeComplexity(1),
+_heuristicUsed(MANHATTAN)
 {
-	class Node *start = new class Node(0, this->manhattan(board), board);
+	class Node *start = new class Node(0, this->countHeuristic(board), board);
 
 	_opened.push(start);
 	_openedMap.emplace(start->getHash(), start);
@@ -123,15 +126,23 @@ int	Astar::solve(void)
 	class Board *board;
 	t_node_prio_queue children;
 	class NodeCompare compare;
-
+// int i = 0;
 	while (!_opened.empty())
 	{
 		_timeComplexity++;
 		node = _opened.top();
 		board = node->getBoard();
-		if (this->manhattan(board) == 0)
+		if (this->countHeuristic(board) == 0)
 			return (1);
 		_opened.pop();
+		//////////////////////////////DEBUG//////////////////////////////////////////////
+		// std::cout << "=========== " << i << " =============" << std::endl;
+		// std::cout << "Cost: " << node->getCost();
+		// std::cout << ", Heuristic: " << node->getHeuristic() << std::endl;
+		// board->printMap();
+		// i++;
+		// std::cout << "=============================" << std::endl;
+		//////////////////////////////DEBUG//////////////////////////////////////////////
 		this->searchChildren(node, children);
 		while (!children.empty())
 		{
@@ -142,8 +153,6 @@ int	Astar::solve(void)
 				delete child;
 			else
 			{
-				// if open -> open moins bon
-					//JE DEVRAIS METTRE MON child QUI EST MEILLEUR, sauf que infinite loop
 				if (open)
 				{
 					open->setParent(child->getParent());
@@ -181,28 +190,28 @@ void	Astar::searchChildren(class Node *node, t_node_prio_queue &children)
 					std::swap(map[y][x], map[y][x - 1]);
 					newBoard = new class Board(board->size(), map);
 					std::swap(map[y][x], map[y][x - 1]);
-					children.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard, node));
+					children.push(new class Node(node->getCost() + 1, this->countHeuristic(newBoard), newBoard, node));
 				}
 				if (x < board->size() - 1)
 				{
 					std::swap(map[y][x], map[y][x + 1]);
 					newBoard = new class Board(board->size(), map);
 					std::swap(map[y][x], map[y][x + 1]);
-					children.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard, node));
+					children.push(new class Node(node->getCost() + 1, this->countHeuristic(newBoard), newBoard, node));
 				}
 				if (y > 0)
 				{
 					std::swap(map[y][x], map[y - 1][x]);
 					newBoard = new class Board(board->size(), map);
 					std::swap(map[y][x], map[y - 1][x]);
-					children.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard, node));
+					children.push(new class Node(node->getCost() + 1, this->countHeuristic(newBoard), newBoard, node));
 				}
 				if (y < board->size() - 1)
 				{
 					std::swap(map[y][x], map[y + 1][x]);
 					newBoard = new class Board(board->size(), map);
 					std::swap(map[y][x], map[y + 1][x]);
-					children.push(new class Node(node->getCost() + 1, this->manhattan(newBoard), newBoard, node));
+					children.push(new class Node(node->getCost() + 1, this->countHeuristic(newBoard), newBoard, node));
 				}
 			}
 		}
@@ -216,7 +225,24 @@ class Node* Astar::getIfExist(std::map<std::string, class Node*> &map, std::stri
 	return (NULL);
 }
 
-int		Astar::manhattan(class Board *board)
+int	Astar::countHeuristic(class Board *board)
+{
+	int count = 0;
+
+	switch (_heuristicUsed)
+	{
+		case MANHATTAN :
+			count = this->manhattan(board);
+		break;
+
+		case DIJKSTRA :
+			count = this->dijkstra(board);
+		break;
+	}
+	return (count);
+}
+
+int Astar::manhattan(class Board *board)
 {
 	int dist = 0;
 	std::vector<std::vector<int>> map = board->getMap();
@@ -231,6 +257,22 @@ int		Astar::manhattan(class Board *board)
 		}
 	}
 	return (dist);
+}
+
+int Astar::dijkstra(class Board *board)
+{
+	std::vector<std::vector<int>> map = board->getMap();
+
+	for (int y = 0; y < board->size(); y++)
+	{
+		for (int x = 0; x < board->size(); x++)
+		{
+			int nb = map[y][x];
+			if (x - _solvedMap[nb][X] != 0 || y - _solvedMap[nb][Y] != 0)
+				return (1);
+		}
+	}
+	return (0);
 }
 
 /*
