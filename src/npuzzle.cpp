@@ -56,7 +56,7 @@ Board	*Npuzzle::parse(char *path)
 	}
 	else
 		throw std::logic_error("Impossible to open map\n");
-	return (new Board(7, "39 2 29 9 43 6 3 44 1 28 5 26 8 32 24 27 0 4 30 41 25 37 23 36 22 31 7 12 21 17 18 42 48 11 10 20 16 15 34 40 13 33 19 35 45 38 46 47 14"));
+	return (new Board(4, "3 14 4 5 2 12 0 15 13 1 11 6 10 9 8 7"));
 }
 
 //1 MOVE :   "1 2 3 0 8 4 7 6 5"
@@ -66,6 +66,8 @@ Board	*Npuzzle::parse(char *path)
 // 4*4 map : "4 8 7 14 0 10 13 5 2 9 6 15 12 11 1 3"
 //veryhard 4*4 map : "1 12 11 10 2 13 0 9 3 14 15 8 4 5 6 7"
 //hardcore 4*4 map : "0 15 14 13 5 4 3 12 6 2 1 11 7 8 9 10"
+
+// 7*7 : "39 2 29 9 43 6 3 44 1 28 5 26 8 32 24 27 0 4 30 41 25 37 23 36 22 31 7 12 21 17 18 42 48 11 10 20 16 15 34 40 13 33 19 35 45 38 46 47 14"
 
 // TIME
 // TOTAL STATE SELECTED (closed + open)

@@ -8,7 +8,8 @@ Astar::Astar(std::vector<glm::ivec2> &solvedMap, class Board *board) :
 _solvedMap(solvedMap),
 _timeComplexity(0),
 _sizeComplexity(1),
-_heuristicUsed(MANHATTAN)
+_heuristicUsed(PATTERN_DATABASE),
+_patternDatabase(board->size(), pow(board->size(), 3))
 {
 	class Node *start = new class Node(0, this->countHeuristic(board), board);
 
@@ -132,9 +133,6 @@ int	Astar::solve(void)
 		_timeComplexity++;
 		node = _opened.top();
 		board = node->getBoard();
-		if (this->countHeuristic(board) == 0)
-			return (1);
-		_opened.pop();
 		//////////////////////////////DEBUG//////////////////////////////////////////////
 		// std::cout << "=========== " << i << " =============" << std::endl;
 		// std::cout << "Cost: " << node->getCost();
@@ -143,6 +141,9 @@ int	Astar::solve(void)
 		// i++;
 		// std::cout << "=============================" << std::endl;
 		//////////////////////////////DEBUG//////////////////////////////////////////////
+		if (this->dijkstra(board) == 0)
+			return (1);
+		_opened.pop();
 		this->searchChildren(node, children);
 		while (!children.empty())
 		{
@@ -229,16 +230,16 @@ int	Astar::countHeuristic(class Board *board)
 {
 	int count = 0;
 
-	switch (_heuristicUsed)
-	{
-		case MANHATTAN :
-			count = this->manhattan(board);
-		break;
-
-		case DIJKSTRA :
-			count = this->dijkstra(board);
-		break;
-	}
+	if (_heuristicUsed & DIJKSTRA)
+		return (this->dijkstra(board));
+	if (_heuristicUsed & PATTERN_DATABASE)
+		return (this->patternDatabase(board));
+	if (_heuristicUsed & MANHATTAN)
+		count += this->manhattan(board);
+	if (_heuristicUsed & LINEAR_CONFLICT)
+		count += this->linearConflict(board);
+	if (_heuristicUsed & OUT_ROW_COLUMN)
+		count += this->OutOfRowOrColumn(board);
 	return (count);
 }
 
@@ -254,6 +255,55 @@ int Astar::manhattan(class Board *board)
 			int nb = map[y][x];
 			if (nb)
 				dist += abs(x - _solvedMap[nb][X]) + abs(y - _solvedMap[nb][Y]);
+		}
+	}
+	return (dist);
+}
+
+int Astar::linearConflict(class Board *board)
+{
+	int dist = 0;
+	std::vector<std::vector<int>> map = board->getMap();
+
+	for (int y = 0; y < board->size(); y++)
+	{
+		for (int x = 0; x < board->size(); x++)
+		{
+			int nb = map[y][x];
+			if (nb && x < board->size() - 1 && y == _solvedMap[nb][Y])
+			{
+				for (int i = x + 1; i < board->size(); i++)
+				{
+					int nb2 = map[y][i];
+					if (nb2 && y == _solvedMap[nb2][Y] && _solvedMap[nb2][X] < _solvedMap[nb][X])
+					dist += 2;
+				}
+			}
+			// if (nb)
+			// 	dist += abs(x - _solvedMap[nb][X]) + abs(y - _solvedMap[nb][Y]);
+		}
+	}
+	return (dist);
+}
+
+int Astar::OutOfRowOrColumn(class Board *board)
+{
+	int dist = 0;
+	std::vector<std::vector<int>> map = board->getMap();
+
+	for (int y = 0; y < board->size(); y++)
+	{
+		for (int x = 0; x < board->size(); x++)
+		{
+			int nb = map[y][x];
+			if (nb)
+			{
+				if (_solvedMap[nb][X] != x)
+					dist++;
+				if (_solvedMap[nb][Y] != y)
+					dist++;
+				// dist += abs(x - _solvedMap[nb][X]) + abs(y - _solvedMap[nb][Y]);
+			}
 		}
 	}
 	return (dist);
@@ -275,84 +325,76 @@ int Astar::dijkstra(class Board *board)
 	return (0);
 }
 
+int Astar::patternDatabase(class Board *board)
+{
+	std::vector<std::vector<int>> map = board->getMap();
+
+	for (int y = 0; y < board->size(); y++)
+	{
+		for (int x = 0; x < board->size(); x++)
+		{
+			std::cout << "SIZE : " << _patternDatabase._size << '\n';
+			std::cout << "patternDist : " << _patternDatabase._patternDist << '\n';
+			return (1);
+		}
+	}
+	return (0);
+}
+
 /*
-============   >= 				============		/8\
-NORMAL
-Number of states in opened: 1073
-Number of states in closed: 801
-Maximum states stored: 1874
-Moves from initial state to final state: 94(94)		/2\
-
-VERY_HARD
-Number of states in opened: 12224
-Number of states in closed: 9653
-Maximum states stored: 21877
-Moves from initial state to final state: 158(154)	/4\
-
-HARDCORE
-Number of states in opened: 4128
-Number of states in closed: 3151
-Maximum states stored: 7279
-Moves from initial state to final state: 137(133)	/2\
-============================================				381 -> 2
-
-============   > 				============		/6\
-NORMAL
-Number of states in opened: 1030
-Number of states in closed: 788
-Maximum states stored: 1818
-Moves from initial state to final state: 94(94)		/1\
-
-VERY_HARD
-Number of states in opened: 2362
-Number of states in closed: 1794
-Maximum states stored: 4156
-Moves from initial state to final state: 124(124)	/1\
-
-HARDCORE
-Number of states in opened: 9844
-Number of states in closed: 7453
-Maximum states stored: 17297
-Moves from initial state to final state: 169(165)	/4\
-============================================				383 -> 3
-
-============   >  ET	if (nb) ============		/7\
-NORMAL 4
-Number of states in opened: 1209
-Number of states in closed: 1132
-Maximum states stored: 2341
-Moves from initial state to final state: 102(102)	/4\
-
-VERY_HARD 4
-Number of states in opened: 2230
-Number of states in closed: 1977
-Maximum states stored: 4207
-Moves from initial state to final state: 132(132)	/2\
-
-HARDCORE
-Number of states in opened: 3018
-Number of states in closed: 2939
-Maximum states stored: 5957
-Moves from initial state to final state: 129(129)	/1\
-============================================				363 -> 1
-
-============   >= ET	if (nb) ============		/9\
-NORMAL
-Number of states in opened: 1183
-Number of states in closed: 1112
-Maximum states stored: 2295
-Moves from initial state to final state: 102(102)	/3\
-
-VERY_HARD
-Number of states in opened: 2212
-Number of states in closed: 2109
-Maximum states stored: 4321
-Moves from initial state to final state: 152(152)	/3\
-
-HARDCORE
-Number of states in opened: 2954
-Number of states in closed: 2811
-Maximum states stored: 5765
-Moves from initial state to final state: 139(139)	/3\
-============================================				393 -> 4
+========================================================================
+MAP 4 :
+3 14 4 5
+2 12 0 15
+13 1 11 6
+10 9 8 7
+==============================================================
+DIJKSTRA
+Time complexity: 2107367
+Size complexity: 4071649
+Moves: 20
+./npuzzle 3_16.map  150.75s user 15.40s system 135% cpu 2:02.30 total
+==============================================================
+MANHATTAN
+Time complexity: 156
+Size complexity: 332
+Moves: 30
+./npuzzle 3_16.map  0.61s user 0.27s system 40% cpu 2.176 total
+==============================================================
+LINEAR_CONFLICT
+Time complexity: 2297560
+Size complexity: 4408809
+Moves: 20
+./npuzzle 3_16.map  153.33s user 0.26s system 44% cpu 2.085 total
+==============================================================
+OUT_ROW_COLUMN
+Time complexity: 81
+Size complexity: 181
+Moves: 22
+./npuzzle 3_16.map  0.70s user 0.28s system 46% cpu 2.108 total
+==============================================================
+LINEAR_CONFLICT + OUT_ROW_COLUMN
+Time complexity: 125
+Size complexity: 272
+Moves: 30
+./npuzzle 3_16.map  0.67s user 0.25s system 49% cpu 1.860 total
+==============================================================
+MANHATTAN + OUT_ROW_COLUMN
+Time complexity: 115
+Size complexity: 256
+Moves: 36
+./npuzzle 3_16.map  0.62s user 0.24s system 46% cpu 1.843 total
+==============================================================
+MANHATTAN + LINEAR_CONFLICT
+Time complexity: 72
+Size complexity: 153
+Moves: 30
+./npuzzle 3_16.map  0.51s user 0.19s system 44% cpu 1.576 total
+==============================================================
+MANHATTAN + LINEAR_CONFLICT + OUT_ROW_COLUMN
+Time complexity: 82
+Size complexity: 173
+Moves: 30
+./npuzzle 3_16.map  0.47s user 0.17s system 42% cpu 1.476 total
+========================================================================
 */
