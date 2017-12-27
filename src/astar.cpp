@@ -8,8 +8,9 @@ Astar::Astar(std::vector<glm::ivec2> &solvedMap, class Board *board) :
 _solvedMap(solvedMap),
 _timeComplexity(0),
 _sizeComplexity(1),
-_heuristicUsed(PATTERN_DATABASE),
-_patternDatabase(board->size(), pow(board->size(), 3))
+_heuristicUsed(MANHATTAN | LINEAR_CONFLICT),
+_patternDatabase(board->size(), pow(board->size(), 3)),
+_solved(false)
 {
 	class Node *start = new class Node(0, this->countHeuristic(board), board);
 
@@ -17,6 +18,7 @@ _patternDatabase(board->size(), pow(board->size(), 3))
 	_openedMap.emplace(start->getHash(), start);
 	if (this->solve())
 	{
+		_solved = true;
 		std::stack<class Node*> path;
 		int i = 0, move;
 

@@ -46,11 +46,12 @@ public:
 	Astar(std::vector<glm::ivec2> &solvedMap, class Board *board);
 	~Astar();
 	int solve(void);
-
+	inline bool		isSolved(void) { return (_solved); }
+	void restorePath(std::stack<class Node*> &path);
+	
 private:
 	void searchChildren(class Node *node, t_node_prio_queue &children);
 	class Node *getIfExist(std::map<std::string, class Node*> &map, std::string &key);
-	void restorePath(std::stack<class Node*> &path);
 	bool checkMoveValidity(class Board *b1, class Board *b2);
 	int	countHeuristic(class Board *board);
 	int manhattan(class Board *board);
@@ -67,6 +68,7 @@ private:
 	unsigned long						_sizeComplexity;
 	int									_heuristicUsed;
 	class PatternDatabase				_patternDatabase;
+	bool								_solved;
 };
 
 #endif

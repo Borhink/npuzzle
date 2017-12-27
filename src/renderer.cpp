@@ -1,9 +1,11 @@
 #include <stdexcept>
+#include <unistd.h>
 #include "board.h"
 #include "renderer.h"
 #include "mesh.h"
 #include "shaders.h"
 #include "texture.h"
+#include "astar.h"
 
 static void win_resize_callback(GLFWwindow *window, int width, int height)
 {
@@ -105,6 +107,9 @@ void				Renderer::loop(Npuzzle *npuzzle)
 
 	std::vector<glm::ivec2>			solvedMap = npuzzle->getSolvedMap();
 	std::vector<std::vector<int>>	map = board->getMap();
+	Astar 							*as = npuzzle->getAStar();
+	std::stack<class Node*> path;
+	bool					finish = false;
 	while (glfwGetKey(_window, GLFW_KEY_ESCAPE) != GLFW_PRESS
 		&& !glfwWindowShouldClose(_window))
 	{
@@ -117,7 +122,23 @@ void				Renderer::loop(Npuzzle *npuzzle)
 		mainShader.uniform1i((GLchar *)"uTexture", 0);
 		glActiveTexture(GL_TEXTURE0);
 		texture->bind();
-
+		if (as == nullptr)
+			as = npuzzle->getAStar();
+		if (as != nullptr && as->isSolved())
+		{
+			if (path.empty() && !finish)
+				as->restorePath(path);
+			if (!path.empty())
+			{
+				class Node *node = path.top();
+				class Node *parent = node->getParent();
+				class Board *board = node->getBoard();
+				map = board->getMap();
+				path.pop();
+				if (path.empty())
+					finish = true;
+			}
+		}
 		for (int y = 0; y < mapSize; y++)
 		{
 			for (int x = 0; x < mapSize; x++)
@@ -133,6 +154,7 @@ void				Renderer::loop(Npuzzle *npuzzle)
 		}
 	    glfwSwapBuffers(_window);
 	    glfwPollEvents();
+		usleep(100000);
 	}
 	delete texture;
 }

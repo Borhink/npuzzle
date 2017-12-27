@@ -13,7 +13,7 @@ OBJ = $(addprefix $(OBJ_PATH),$(OBJ_NAME))
 INC = $(addprefix -I,$(INC_PATH))
 
 CC = g++
-CFLAGS = -Wall -Wextra -Werror -MMD -pedantic -Wuninitialized -std=c++11 -I ~/.brew/include
+CFLAGS = -MMD -pedantic -Wuninitialized -std=c++11 -I ~/.brew/include
 LIBS = `pkg-config --static --libs glm` \
 	-lm -framework OPENGL `pkg-config --static --libs glfw3` \
 	`pkg-config --static --libs glew`
@@ -30,10 +30,10 @@ $(OBJ_PATH)%.o: $(SRC_PATH)%.cpp $(DEP)
 	$(CC) $(CFLAGS) $(INC) -o $@ -c $<
 
 install:
+	brew install pkg-config
 	brew install glm
 	brew install glfw
 	brew install glew
-	brew install pkg-config
 
 clean:
 	@echo "\033[32;44m Make clean $(NAME) \033[0m"

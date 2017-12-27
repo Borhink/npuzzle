@@ -4,10 +4,10 @@
 #include <fstream>
 #include <string>
 #include "npuzzle.h"
-#include "astar.h"
 
 Npuzzle::Npuzzle(char *map)
 {
+	_astar = nullptr;
 	_board = parse(map);
 	_thread = new std::thread(&Npuzzle::resolve, this);
 	_thread->detach();
@@ -24,8 +24,8 @@ void	Npuzzle::resolve(void)
 {
 	_solvedMap.resize(_board->size() * _board->size(), glm::ivec2(0, 0));
 	_board->getSolvedPoints(_solvedMap);
-	class Astar astar(_solvedMap, new class Board(_board->size(), _board->getHash()));
-	_board->printMap();
+	_astar = new class Astar(_solvedMap, new class Board(_board->size(), _board->getHash()));
+	// _board->printMap();
 }
 
 Board	*Npuzzle::parse(char *path)
@@ -44,7 +44,7 @@ Board	*Npuzzle::parse(char *path)
 				if (!size)
 				{
 					size = std::stoi(str);
-					std::cout << size << std::endl;
+					// std::cout << size << std::endl;
 				}
 				else
 				{
@@ -56,7 +56,7 @@ Board	*Npuzzle::parse(char *path)
 	}
 	else
 		throw std::logic_error("Impossible to open map\n");
-	return (new Board(4, "3 14 4 5 2 12 0 15 13 1 11 6 10 9 8 7"));
+	return (new Board(7, "39 2 29 9 43 6 3 44 1 28 5 26 8 32 24 27 0 4 30 41 25 37 23 36 22 31 7 12 21 17 18 42 48 11 10 20 16 15 34 40 13 33 19 35 45 38 46 47 14"));
 }
 
 //1 MOVE :   "1 2 3 0 8 4 7 6 5"
