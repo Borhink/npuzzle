@@ -7,6 +7,7 @@
 # include <stack>
 # include "node.h"
 # include "struct.h"
+# include "patterndatabase.h"
 
 # define DIJKSTRA (1 << 0)
 # define MANHATTAN (1 << 1)
@@ -30,16 +31,6 @@ public:
 
 typedef std::priority_queue<class Node*, std::vector<class Node*>, NodeCompare> t_node_prio_queue;
 
-class PatternDatabase
-{
-public:
-	inline PatternDatabase(int size, long patternDist): _size(size), _patternDist(patternDist){}
-
-	int		_size;
-	long	_patternDist;
-
-};
-
 class Astar
 {
 public:
@@ -48,7 +39,7 @@ public:
 	int solve(void);
 	inline bool		isSolved(void) { return (_solved); }
 	void restorePath(std::stack<class Node*> &path);
-	
+
 private:
 	void searchChildren(class Node *node, t_node_prio_queue &children);
 	class Node *getIfExist(std::map<std::string, class Node*> &map, std::string &key);

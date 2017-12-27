@@ -8,8 +8,8 @@ Astar::Astar(std::vector<glm::ivec2> &solvedMap, class Board *board) :
 _solvedMap(solvedMap),
 _timeComplexity(0),
 _sizeComplexity(1),
-_heuristicUsed(MANHATTAN | LINEAR_CONFLICT),
-_patternDatabase(board->size(), pow(board->size(), 3)),
+_heuristicUsed(MANHATTAN),
+_patternDatabase(board, solvedMap),
 _solved(false)
 {
 	class Node *start = new class Node(0, this->countHeuristic(board), board);
@@ -36,11 +36,7 @@ _solved(false)
 			//////////////////////////////DEBUG//////////////////////////////////////////////
 			if (!parent || (parent && this->checkMoveValidity(board, parent->getBoard())))
 				std::cout << "MOVE OK" << std::endl;
-			else
-			{
-				std::cout << "WRONG MOVE" << std::endl;
-				break;
-			}
+			else { std::cout << "WRONG MOVE" << std::endl; break; }
 			std::cout << "========================" << std::endl;
 			//////////////////////////////////FIN DEBUG//////////////////////////////////////
 			i++;
@@ -49,65 +45,6 @@ _solved(false)
 		std::cout << "Time complexity: " << _timeComplexity << std::endl;
 		std::cout << "Size complexity: " << _sizeComplexity << std::endl;
 		std::cout << "Moves: " << move << std::endl;
-	}
-}
-
-bool Astar::checkMoveValidity(class Board *b1, class Board *b2)
-{
-	std::vector<std::vector<int>> &m1 = b1->getMap();
-	std::vector<std::vector<int>> &m2 = b2->getMap();
-
-	for (int y = 0; y < b1->size(); y++)
-	{
-		for (int x = 0; x < b1->size(); x++)
-		{
-			if (m1[y][x] != m2[y][x])
-			{
-				if (x < b1->size() - 1 &&  m1[y][x + 1] != m2[y][x + 1])
-				{
-					std::swap(m2[y][x], m2[y][x + 1]);
-					class Board tmp(b1->size(), m2);
-					if (b1->getHash().compare(tmp.getHash()) == 0)
-					{
-						std::swap(m2[y][x], m2[y][x + 1]);
-						return (true);
-					}
-					else
-					{
-						std::swap(m2[y][x], m2[y][x + 1]);
-						return (false);
-					}
-
-				}
-				if (y < b1->size() - 1 &&  m1[y + 1][x] != m2[y + 1][x])
-				{
-					std::swap(m2[y][x], m2[y + 1][x]);
-					class Board tmp(b1->size(), m2);
-					if (b1->getHash().compare(tmp.getHash()) == 0)
-					{
-						std::swap(m2[y][x], m2[y + 1][x]);
-						return (true);
-					}
-					else
-					{
-						std::swap(m2[y][x], m2[y + 1][x]);
-						return (false);
-					}
-				}
-			}
-		}
-	}
-	return (false);
-}
-
-void Astar::restorePath(std::stack<class Node*> &path)
-{
-	class Node *node = _opened.top();
-
-	while (node)
-	{
-		path.push(node);
-		node = node->getParent();
 	}
 }
 
@@ -129,21 +66,22 @@ int	Astar::solve(void)
 	class Board *board;
 	t_node_prio_queue children;
 	class NodeCompare compare;
-// int i = 0;
+int i = 0;
 	while (!_opened.empty())
 	{
 		_timeComplexity++;
 		node = _opened.top();
 		board = node->getBoard();
 		//////////////////////////////DEBUG//////////////////////////////////////////////
-		// std::cout << "=========== " << i << " =============" << std::endl;
-		// std::cout << "Cost: " << node->getCost();
-		// std::cout << ", Heuristic: " << node->getHeuristic() << std::endl;
-		// board->printMap();
-		// i++;
-		// std::cout << "=============================" << std::endl;
+		std::cout << "=========== " << i << " =============" << std::endl;
+		std::cout << "Cost: " << node->getCost();
+		std::cout << ", Heuristic: " << node->getHeuristic() << std::endl;
+		board->printMap();
+		i++;
+		std::cout << "=============================" << std::endl;
+		// usleep(500000);
 		//////////////////////////////DEBUG//////////////////////////////////////////////
-		if (this->dijkstra(board) == 0)
+		if (this->dijkstra(board) == 0 || node->getHeuristic() == 0)
 			return (1);
 		_opened.pop();
 		this->searchChildren(node, children);
@@ -228,6 +166,65 @@ class Node* Astar::getIfExist(std::map<std::string, class Node*> &map, std::stri
 	return (NULL);
 }
 
+bool Astar::checkMoveValidity(class Board *b1, class Board *b2)
+{
+	std::vector<std::vector<int>> &m1 = b1->getMap();
+	std::vector<std::vector<int>> &m2 = b2->getMap();
+
+	for (int y = 0; y < b1->size(); y++)
+	{
+		for (int x = 0; x < b1->size(); x++)
+		{
+			if (m1[y][x] != m2[y][x])
+			{
+				if (x < b1->size() - 1 &&  m1[y][x + 1] != m2[y][x + 1])
+				{
+					std::swap(m2[y][x], m2[y][x + 1]);
+					class Board tmp(b1->size(), m2);
+					if (b1->getHash().compare(tmp.getHash()) == 0)
+					{
+						std::swap(m2[y][x], m2[y][x + 1]);
+						return (true);
+					}
+					else
+					{
+						std::swap(m2[y][x], m2[y][x + 1]);
+						return (false);
+					}
+
+				}
+				if (y < b1->size() - 1 &&  m1[y + 1][x] != m2[y + 1][x])
+				{
+					std::swap(m2[y][x], m2[y + 1][x]);
+					class Board tmp(b1->size(), m2);
+					if (b1->getHash().compare(tmp.getHash()) == 0)
+					{
+						std::swap(m2[y][x], m2[y + 1][x]);
+						return (true);
+					}
+					else
+					{
+						std::swap(m2[y][x], m2[y + 1][x]);
+						return (false);
+					}
+				}
+			}
+		}
+	}
+	return (false);
+}
+
+void Astar::restorePath(std::stack<class Node*> &path)
+{
+	class Node *node = _opened.top();
+
+	while (node)
+	{
+		path.push(node);
+		node = node->getParent();
+	}
+}
+
 int	Astar::countHeuristic(class Board *board)
 {
 	int count = 0;
@@ -281,8 +278,6 @@ int Astar::linearConflict(class Board *board)
 					dist += 2;
 				}
 			}
-			// if (nb)
-			// 	dist += abs(x - _solvedMap[nb][X]) + abs(y - _solvedMap[nb][Y]);
 		}
 	}
 	return (dist);
@@ -304,7 +299,6 @@ int Astar::OutOfRowOrColumn(class Board *board)
 					dist++;
 				if (_solvedMap[nb][Y] != y)
 					dist++;
-				// dist += abs(x - _solvedMap[nb][X]) + abs(y - _solvedMap[nb][Y]);
 			}
 		}
 	}
@@ -327,20 +321,10 @@ int Astar::dijkstra(class Board *board)
 	return (0);
 }
 
+
 int Astar::patternDatabase(class Board *board)
 {
-	std::vector<std::vector<int>> map = board->getMap();
-
-	for (int y = 0; y < board->size(); y++)
-	{
-		for (int x = 0; x < board->size(); x++)
-		{
-			std::cout << "SIZE : " << _patternDatabase._size << '\n';
-			std::cout << "patternDist : " << _patternDatabase._patternDist << '\n';
-			return (1);
-		}
-	}
-	return (0);
+	return (_patternDatabase.manhattan(board));
 }
 
 /*
