@@ -7,13 +7,11 @@
 # include <stack>
 # include "node.h"
 # include "struct.h"
-# include "patterndatabase.h"
 
 # define DIJKSTRA (1 << 0)
 # define MANHATTAN (1 << 1)
 # define LINEAR_CONFLICT (1 << 2)
 # define OUT_ROW_COLUMN (1 << 3)
-# define PATTERN_DATABASE (1 << 4)
 
 class Board;
 
@@ -58,8 +56,8 @@ private:
 	unsigned long						_timeComplexity;
 	unsigned long						_sizeComplexity;
 	int									_heuristicUsed;
-	class PatternDatabase				_patternDatabase;
 	bool								_solved;
+	std::clock_t						start;
 };
 
 #endif

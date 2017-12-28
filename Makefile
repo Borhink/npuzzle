@@ -4,7 +4,7 @@ INC_PATH = ./inc/
 
 SRC_NAME = main.cpp board.cpp node.cpp npuzzle.cpp\
 	renderer.cpp mesh.cpp shaders.cpp texture.cpp\
-	astar.cpp patterndatabase.cpp
+	astar.cpp
 OBJ_NAME = $(SRC_NAME:.cpp=.o)
 NAME = npuzzle
 

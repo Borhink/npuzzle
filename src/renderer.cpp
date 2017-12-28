@@ -110,6 +110,7 @@ void				Renderer::loop(Npuzzle *npuzzle)
 	Astar 							*as = npuzzle->getAStar();
 	std::stack<class Node*> path;
 	bool					finish = false;
+	int 					sleepTime = 100000;
 	while (glfwGetKey(_window, GLFW_KEY_ESCAPE) != GLFW_PRESS
 		&& !glfwWindowShouldClose(_window))
 	{
@@ -127,7 +128,15 @@ void				Renderer::loop(Npuzzle *npuzzle)
 		if (as != nullptr && as->isSolved())
 		{
 			if (path.empty() && !finish)
+			{
 				as->restorePath(path);
+				if (!path.empty())
+				{
+					sleepTime = 10000000 / path.size();
+					if (sleepTime > 1000000)
+						sleepTime = 1000000;
+				}
+			}
 			if (!path.empty())
 			{
 				class Node *node = path.top();
@@ -154,7 +163,7 @@ void				Renderer::loop(Npuzzle *npuzzle)
 		}
 	    glfwSwapBuffers(_window);
 	    glfwPollEvents();
-		usleep(100000);
+		usleep(sleepTime);
 	}
 	delete texture;
 }

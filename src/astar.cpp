@@ -9,7 +9,6 @@ _solvedMap(solvedMap),
 _timeComplexity(0),
 _sizeComplexity(1),
 _heuristicUsed(MANHATTAN),
-_patternDatabase(board, solvedMap),
 _solved(false)
 {
 	class Node *start = new class Node(0, this->countHeuristic(board), board);
@@ -66,22 +65,13 @@ int	Astar::solve(void)
 	class Board *board;
 	t_node_prio_queue children;
 	class NodeCompare compare;
-int i = 0;
+
 	while (!_opened.empty())
 	{
 		_timeComplexity++;
 		node = _opened.top();
 		board = node->getBoard();
-		//////////////////////////////DEBUG//////////////////////////////////////////////
-		std::cout << "=========== " << i << " =============" << std::endl;
-		std::cout << "Cost: " << node->getCost();
-		std::cout << ", Heuristic: " << node->getHeuristic() << std::endl;
-		board->printMap();
-		i++;
-		std::cout << "=============================" << std::endl;
-		// usleep(500000);
-		//////////////////////////////DEBUG//////////////////////////////////////////////
-		if (this->dijkstra(board) == 0 || node->getHeuristic() == 0)
+		if (this->dijkstra(board) == 0)
 			return (1);
 		_opened.pop();
 		this->searchChildren(node, children);
@@ -231,8 +221,6 @@ int	Astar::countHeuristic(class Board *board)
 
 	if (_heuristicUsed & DIJKSTRA)
 		return (this->dijkstra(board));
-	if (_heuristicUsed & PATTERN_DATABASE)
-		return (this->patternDatabase(board));
 	if (_heuristicUsed & MANHATTAN)
 		count += this->manhattan(board);
 	if (_heuristicUsed & LINEAR_CONFLICT)
@@ -320,67 +308,3 @@ int Astar::dijkstra(class Board *board)
 	}
 	return (0);
 }
-
-
-int Astar::patternDatabase(class Board *board)
-{
-	return (_patternDatabase.manhattan(board));
-}
-
-/*
-========================================================================
-MAP 4 :
-3 14 4 5
-2 12 0 15
-13 1 11 6
-10 9 8 7
-==============================================================
-DIJKSTRA
-Time complexity: 2107367
-Size complexity: 4071649
-Moves: 20
-./npuzzle 3_16.map  150.75s user 15.40s system 135% cpu 2:02.30 total
-==============================================================
-MANHATTAN
-Time complexity: 156
-Size complexity: 332
-Moves: 30
-./npuzzle 3_16.map  0.61s user 0.27s system 40% cpu 2.176 total
-==============================================================
-LINEAR_CONFLICT
-Time complexity: 2297560
-Size complexity: 4408809
-Moves: 20
-./npuzzle 3_16.map  153.33s user 0.26s system 44% cpu 2.085 total
-==============================================================
-OUT_ROW_COLUMN
-Time complexity: 81
-Size complexity: 181
-Moves: 22
-./npuzzle 3_16.map  0.70s user 0.28s system 46% cpu 2.108 total
-==============================================================
-LINEAR_CONFLICT + OUT_ROW_COLUMN
-Time complexity: 125
-Size complexity: 272
-Moves: 30
-./npuzzle 3_16.map  0.67s user 0.25s system 49% cpu 1.860 total
-==============================================================
-MANHATTAN + OUT_ROW_COLUMN
-Time complexity: 115
-Size complexity: 256
-Moves: 36
-./npuzzle 3_16.map  0.62s user 0.24s system 46% cpu 1.843 total
-==============================================================
-MANHATTAN + LINEAR_CONFLICT
-Time complexity: 72
-Size complexity: 153
-Moves: 30
-./npuzzle 3_16.map  0.51s user 0.19s system 44% cpu 1.576 total
-==============================================================
-MANHATTAN + LINEAR_CONFLICT + OUT_ROW_COLUMN
-Time complexity: 82
-Size complexity: 173
-Moves: 30
-./npuzzle 3_16.map  0.47s user 0.17s system 42% cpu 1.476 total
-========================================================================
-*/
