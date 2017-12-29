@@ -96,9 +96,11 @@ void				Renderer::loop(Npuzzle *npuzzle)
 	mesh.add(2, GL_FLOAT, 2, (void *)vTex, 6);
 	mesh.end();
 
+	///////////// TRUC DEGUEULASSE A MOI ///////////
 	char paths[6][256] = {"textures/univers.bmp", "textures/marvin.bmp", "textures/baleine.bmp", "textures/pikachu.bmp", "textures/dessin.bmp", "textures/mosaique.bmp"};
 
 	Texture	*texture = Texture::LoadBMP(paths[std::rand() % 6]);
+	///////////// FIN TRUC DEGUEULASSE A MOI ///////////
 
 	Board	*board = npuzzle->getBoard();
 	int		mapSize = board->size();
@@ -132,12 +134,14 @@ void				Renderer::loop(Npuzzle *npuzzle)
 			if (path.empty() && !finish)
 			{
 				as->restorePath(path);
+				///////////// TRUC DEGUEULASSE A MOI ///////////
 				if (!path.empty())
 				{
 					sleepTime = 10000000 / path.size();
 					if (sleepTime > 1000000)
 						sleepTime = 1000000;
 				}
+				///////////// FIN TRUC DEGUEULASSE A MOI ///////////
 			}
 			if (!path.empty())
 			{
@@ -154,6 +158,15 @@ void				Renderer::loop(Npuzzle *npuzzle)
 		{
 			for (int x = 0; x < mapSize; x++)
 			{
+				///////////// TRUC DEGUEULASSE A MOI ///////////
+				if (finish && map[y][x] == 0)
+				{
+					glm::ivec2 current = solvedMap[map[y][x]];
+					mainShader.uniform2fv((GLchar *)"pos", offsetx + x * renderScale, y * renderScale);
+					mainShader.uniform2fv((GLchar *)"posTex", current[0] * textureScale, current[1] * textureScale);
+					mesh.render();
+				}
+				///////////// FIN TRUC DEGUEULASSE A MOI ///////////
 				if (map[y][x] != 0)
 				{
 					glm::ivec2 current = solvedMap[map[y][x]];
