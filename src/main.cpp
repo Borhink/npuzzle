@@ -5,6 +5,7 @@
 
 int		main(int ac, char** av)
 {
+	std::srand(std::time(nullptr));
 	if (ac < 2)
 		std::cout << "Usage: ./npuzzle [map file]" << std::endl;
 	else

@@ -96,7 +96,9 @@ void				Renderer::loop(Npuzzle *npuzzle)
 	mesh.add(2, GL_FLOAT, 2, (void *)vTex, 6);
 	mesh.end();
 
-	Texture	*texture = Texture::LoadBMP("textures/marvin.bmp");
+	char paths[6][256] = {"textures/univers.bmp", "textures/marvin.bmp", "textures/baleine.bmp", "textures/pikachu.bmp", "textures/dessin.bmp", "textures/mosaique.bmp"};
+
+	Texture	*texture = Texture::LoadBMP(paths[std::rand() % 6]);
 
 	Board	*board = npuzzle->getBoard();
 	int		mapSize = board->size();

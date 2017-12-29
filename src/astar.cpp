@@ -8,11 +8,12 @@ Astar::Astar(std::vector<glm::ivec2> &solvedMap, class Board *board) :
 _solvedMap(solvedMap),
 _timeComplexity(0),
 _sizeComplexity(1),
-_heuristicUsed(MANHATTAN),
+_heuristicUsed(MANHATTAN + LINEAR_CONFLICT),
 _solved(false)
 {
 	class Node *start = new class Node(0, this->countHeuristic(board), board);
 
+	_time = clock();
 	_opened.push(start);
 	_openedMap.emplace(start->getHash(), start);
 	if (this->solve())
@@ -44,6 +45,8 @@ _solved(false)
 		std::cout << "Time complexity: " << _timeComplexity << std::endl;
 		std::cout << "Size complexity: " << _sizeComplexity << std::endl;
 		std::cout << "Moves: " << move << std::endl;
+		_time = clock() - _time;
+		std::cout << "Time : " << (float)_time / CLOCKS_PER_SEC << "s" << std::endl;
 	}
 }
 
@@ -226,7 +229,9 @@ int	Astar::countHeuristic(class Board *board)
 	if (_heuristicUsed & LINEAR_CONFLICT)
 		count += this->linearConflict(board);
 	if (_heuristicUsed & OUT_ROW_COLUMN)
-		count += this->OutOfRowOrColumn(board);
+		count += this->outOfRowOrColumn(board);
+	if (_heuristicUsed & EUCLIDEAN)
+		count += this->euclidean(board);
 	return (count);
 }
 
@@ -263,7 +268,23 @@ int Astar::linearConflict(class Board *board)
 				{
 					int nb2 = map[y][i];
 					if (nb2 && y == _solvedMap[nb2][Y] && _solvedMap[nb2][X] < _solvedMap[nb][X])
-					dist += 2;
+						dist += 2;
+				}
+			}
+		}
+	}
+	for (int x = 0; x < board->size(); x++)
+	{
+		for (int y = 0; y < board->size(); y++)
+		{
+			int nb = map[y][x];
+			if (nb && y < board->size() - 1 && x == _solvedMap[nb][X])
+			{
+				for (int j = y + 1; j < board->size(); j++)
+				{
+					int nb2 = map[j][x];
+					if (nb2 && x == _solvedMap[nb2][X] && _solvedMap[nb2][Y] < _solvedMap[nb][Y])
+						dist += 2;
 				}
 			}
 		}
@@ -271,7 +292,7 @@ int Astar::linearConflict(class Board *board)
 	return (dist);
 }
 
-int Astar::OutOfRowOrColumn(class Board *board)
+int Astar::outOfRowOrColumn(class Board *board)
 {
 	int dist = 0;
 	std::vector<std::vector<int>> map = board->getMap();
@@ -307,4 +328,25 @@ int Astar::dijkstra(class Board *board)
 		}
 	}
 	return (0);
+}
+
+int Astar::euclidean(class Board *board)
+{
+	int dist = 0;
+	std::vector<std::vector<int>> map = board->getMap();
+
+	for (int y = 0; y < board->size(); y++)
+	{
+		for (int x = 0; x < board->size(); x++)
+		{
+			int nb = map[y][x];
+			if (nb)
+			{
+				int xDist = x - _solvedMap[nb][X];
+				int yDist = y - _solvedMap[nb][Y];
+				dist += sqrt(pow(xDist , 2) + pow(yDist, 2));
+			}
+		}
+	}
+	return (dist);
 }

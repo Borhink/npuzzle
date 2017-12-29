@@ -44,10 +44,6 @@ void Board::getSolvedPoints(std::vector<glm::ivec2> &map)
 	this->generateSolvedPoints(map, _size, 0, 0, RIGHT, 1, 1);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//								PRIVATES FUNCTIONS							  //
-////////////////////////////////////////////////////////////////////////////////
-
 void Board::generateSolvedPoints(std::vector<glm::ivec2> &map, int len, int x, int y, int dir, int nb, int swap)
 {
 	int	i = 0;

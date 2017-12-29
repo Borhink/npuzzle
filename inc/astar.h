@@ -12,6 +12,7 @@
 # define MANHATTAN (1 << 1)
 # define LINEAR_CONFLICT (1 << 2)
 # define OUT_ROW_COLUMN (1 << 3)
+# define EUCLIDEAN (1 << 4)
 
 class Board;
 
@@ -45,9 +46,9 @@ private:
 	int	countHeuristic(class Board *board);
 	int manhattan(class Board *board);
 	int linearConflict(class Board *board);
-	int OutOfRowOrColumn(class Board *board);
+	int outOfRowOrColumn(class Board *board);
 	int dijkstra(class Board *board);
-	int patternDatabase(class Board *board);
+	int euclidean(class Board *board);
 
 	t_node_prio_queue					_opened;
 	std::map<std::string, class Node*>	_openedMap;
@@ -57,7 +58,7 @@ private:
 	unsigned long						_sizeComplexity;
 	int									_heuristicUsed;
 	bool								_solved;
-	std::clock_t						start;
+	std::clock_t						_time;
 };
 
 #endif
