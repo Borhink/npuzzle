@@ -8,7 +8,7 @@ Astar::Astar(std::vector<glm::ivec2> &solvedMap, class Board *board) :
 _solvedMap(solvedMap),
 _timeComplexity(0),
 _sizeComplexity(1),
-_heuristicUsed(MANHATTAN + LINEAR_CONFLICT),
+_heuristicUsed(EUCLIDEAN),
 _solved(false)
 {
 	class Node *start = new class Node(0, this->countHeuristic(board), board);

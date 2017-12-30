@@ -9,8 +9,15 @@ Npuzzle::Npuzzle(char *map)
 {
 	_astar = nullptr;
 	_board = parse(map);
-	_thread = new std::thread(&Npuzzle::resolve, this);
-	_thread->detach();
+	_solvedMap.resize(_board->size() * _board->size(), glm::ivec2(0, 0));
+	_board->getSolvedPoints(_solvedMap);
+	if (this->checkIfSolvable())
+	{
+		_thread = new std::thread(&Npuzzle::resolve, this);
+		_thread->detach();
+	}
+	else
+		std::cout << "Error: map is unsolvable" << std::endl;
 }
 
 Npuzzle::~Npuzzle()
@@ -20,15 +27,65 @@ Npuzzle::~Npuzzle()
 	_solvedMap.clear();
 }
 
+int	Npuzzle::countInversions(int x, int y, std::vector<std::vector<int>> &map)
+{
+	int nb = map[y][x];
+	int inversions = 0;
+	int k = x + y * _board->size();
+
+	for (; k < _board->size() * _board->size(); k++)
+	{
+		x = k % _board->size();
+		y = k / _board->size();
+		if (map[y][x] && map[y][x] < nb)
+			inversions++;
+	}
+	return (inversions);
+}
+
+bool	Npuzzle::checkIfSolvable(void)
+{
+	std::vector<std::vector<int>> map = _board->getMap();
+	int startInversions = 0, endInversions = 0;
+	int startPosY = 0, endPosY = 0;
+
+	for (int y = 0; y < _board->size(); y++)
+	{
+		for (int x = 0; x < _board->size(); x++)
+		{
+			if (map[y][x])
+				startInversions += this->countInversions(x, y, map);
+			else
+				startPosY = y;
+		}
+	}
+	for (int i = 0; i < _board->size() * _board->size(); i++)
+		map[_solvedMap[i][Y]][_solvedMap[i][X]] = i;
+	for (int y = 0; y < _board->size(); y++)
+	{
+		for (int x = 0; x < _board->size(); x++)
+		{
+			if (map[y][x])
+				endInversions += this->countInversions(x, y, map);
+			else
+				endPosY = y;
+		}
+	}
+	if (!(_board->size() % 2))
+	{
+		startInversions += startPosY;
+		endInversions += endPosY;
+	}
+	return ((startInversions % 2) == (endInversions % 2));
+}
+
 void	Npuzzle::resolve(void)
 {
-	_solvedMap.resize(_board->size() * _board->size(), glm::ivec2(0, 0));
-	_board->getSolvedPoints(_solvedMap);
 	_astar = new class Astar(_solvedMap, new class Board(_board->size(), _board->getHash()));
 	// _board->printMap();
 }
 
-Board	*Npuzzle::parse(char *path)
+class Board	*Npuzzle::parse(char *path)
 {
 	size_t	size = 0;
 	std::ifstream fileStream(path, std::ios::in);

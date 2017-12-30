@@ -18,7 +18,10 @@ public:
 	inline class Astar				*getAStar(void) { return (_astar); }
 
 private:
-	Board							*parse(char *path);
+	int								countInversions(int i, int j, std::vector<std::vector<int>> &map);
+	bool							checkIfSolvable(void);
+	class Board						*parse(char *path);
+
 	std::thread						*_thread;
 	class Board						*_board;
 	std::vector<glm::ivec2>			_solvedMap;
