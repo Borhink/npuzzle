@@ -50,6 +50,7 @@ private:
 	int outOfRowOrColumn(class Board *board);
 	int dijkstra(class Board *board);
 	int euclidean(class Board *board);
+	int misplaced(class Board *board);
 
 	t_node_prio_queue					_opened;
 	std::map<std::string, class Node*>	_openedMap;
