@@ -13,6 +13,7 @@
 # define LINEAR_CONFLICT (1 << 2)
 # define OUT_ROW_COLUMN (1 << 3)
 # define EUCLIDEAN (1 << 4)
+# define MISPLACED (1 << 5)
 
 class Board;
 

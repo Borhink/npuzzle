@@ -232,6 +232,8 @@ int	Astar::countHeuristic(class Board *board)
 		count += this->outOfRowOrColumn(board);
 	if (_heuristicUsed & EUCLIDEAN)
 		count += this->euclidean(board);
+	if (_heuristicUsed & MISPLACED)
+		count += this->misplaced(board);
 	return (count);
 }
 
@@ -346,6 +348,23 @@ int Astar::euclidean(class Board *board)
 				int yDist = y - _solvedMap[nb][Y];
 				dist += sqrt(pow(xDist , 2) + pow(yDist, 2));
 			}
+		}
+	}
+	return (dist);
+}
+
+int Astar::misplaced(class Board *board)
+{
+	int dist = 0;
+	std::vector<std::vector<int>> map = board->getMap();
+
+	for (int y = 0; y < board->size(); y++)
+	{
+		for (int x = 0; x < board->size(); x++)
+		{
+			int nb = map[y][x];
+			if (nb && (x - _solvedMap[nb][X] != 0 || y - _solvedMap[nb][Y] != 0))
+				dist++;
 		}
 	}
 	return (dist);
