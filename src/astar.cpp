@@ -8,7 +8,7 @@ Astar::Astar(std::vector<glm::ivec2> &solvedMap, class Board *board) :
 _solvedMap(solvedMap),
 _timeComplexity(0),
 _sizeComplexity(1),
-_heuristicUsed(EUCLIDEAN),
+_heuristicUsed(MANHATTAN),
 _solved(false)
 {
 	class Node *start = new class Node(0, this->countHeuristic(board), board);
@@ -37,6 +37,8 @@ _solved(false)
 			if (!parent || (parent && this->checkMoveValidity(board, parent->getBoard())))
 				std::cout << "MOVE OK" << std::endl;
 			else { std::cout << "WRONG MOVE" << std::endl; break; }
+			if (parent && node->getCost() - 1 != parent->getCost())
+				{ std::cout << "WRONG MOVE" << std::endl; break; }
 			std::cout << "========================" << std::endl;
 			//////////////////////////////////FIN DEBUG//////////////////////////////////////
 			i++;
@@ -87,7 +89,7 @@ int	Astar::solve(void)
 				delete child;
 			else
 			{
-				if (open)
+				if (open && open->getCost() > child->getCost())
 				{
 					open->setParent(child->getParent());
 					open->setCost(child->getCost());
