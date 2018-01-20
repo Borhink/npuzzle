@@ -21,3 +21,13 @@ int		main(int ac, char** av)
 	}
 	return (0);
 }
+
+//TO DO
+//PARSING
+
+// TO DO BONUS
+//-c -cost (valeur ajoutée par move (default 1))
+//-g -generateur dans le fichier
+//-v -verbose (affiche la map à chaque etat. Sinon affiche juste les moves (left, right, etc...))
+//-s -solved fournir un fichier solution personnalisé
+//-g graphique (OK)

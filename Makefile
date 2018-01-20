@@ -25,7 +25,7 @@ all:
 $(NAME): $(OBJ)
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
-$(OBJ_PATH)%.o: $(SRC_PATH)%.cpp $(DEP)
+$(OBJ_PATH)%.o: $(SRC_PATH)%.cpp
 	@mkdir -p $(OBJ_PATH)
 	$(CC) $(CFLAGS) $(INC) -o $@ -c $<
 
