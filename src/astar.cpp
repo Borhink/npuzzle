@@ -8,7 +8,7 @@ Astar::Astar(std::vector<glm::ivec2> &solvedMap, class Board *board) :
 _solvedMap(solvedMap),
 _timeComplexity(0),
 _sizeComplexity(1),
-_heuristicUsed(MANHATTAN),
+_heuristicUsed(MANHATTAN | LINEAR_CONFLICT),
 _solved(false)
 {
 	class Node *start = new class Node(0, this->countHeuristic(board), board);
@@ -172,7 +172,7 @@ bool Astar::checkMoveValidity(class Board *b1, class Board *b2)
 		{
 			if (m1[y][x] != m2[y][x])
 			{
-				if (x < b1->size() - 1 &&  m1[y][x + 1] != m2[y][x + 1])
+				if (x < b1->size() - 1 && m1[y][x + 1] != m2[y][x + 1])
 				{
 					std::swap(m2[y][x], m2[y][x + 1]);
 					class Board tmp(b1->size(), m2);
@@ -188,7 +188,7 @@ bool Astar::checkMoveValidity(class Board *b1, class Board *b2)
 					}
 
 				}
-				if (y < b1->size() - 1 &&  m1[y + 1][x] != m2[y + 1][x])
+				if (y < b1->size() - 1 && m1[y + 1][x] != m2[y + 1][x])
 				{
 					std::swap(m2[y][x], m2[y + 1][x]);
 					class Board tmp(b1->size(), m2);

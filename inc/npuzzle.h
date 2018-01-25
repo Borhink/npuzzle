@@ -7,10 +7,13 @@
 # include "board.h"
 # include "astar.h"
 
+# define VALID 2
+# define INVALID 3
+
 class Npuzzle
 {
 public:
-	Npuzzle(char *map);
+	Npuzzle(int ac, char **av);
 	~Npuzzle();
 	void							resolve(void);
 	inline Board					*getBoard(void) { return (_board); }
@@ -20,12 +23,19 @@ public:
 private:
 	int								countInversions(int i, int j, std::vector<std::vector<int>> &map);
 	bool							checkIfSolvable(void);
+	int								parseArgs(int ac, char **av);
 	class Board						*parse(char *path);
+	class Board						*generate(void);
+	void							generateVectorMap(std::vector<std::vector<int>> &map, int len, int x, int y, int dir, int nb, int swap);
 
 	std::thread						*_thread;
 	class Board						*_board;
 	std::vector<glm::ivec2>			_solvedMap;
 	class Astar						*_astar;
+	char							*_pathMap;
+	bool							_generate;
+	int								_generateSize;
+	int								_generateParam;
 
 };
 

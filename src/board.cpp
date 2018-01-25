@@ -67,7 +67,6 @@ void Board::generateSolvedPoints(std::vector<glm::ivec2> &map, int len, int x, i
 		this->generateSolvedPoints(map, len, x + 1, y - 1, UP, nb, swap);
 	if (dir == UP)
 		this->generateSolvedPoints(map, len, x + 1, y + 1, RIGHT, nb, swap);
-
 }
 
 void Board::parseHash(std::string hash)
