@@ -114,8 +114,10 @@ class Board	*Npuzzle::parse(char *path)
 	size_t	size = 0;
 	std::ifstream fileStream(path, std::ios::in);
 	std::string lineMap("");
+	std::stringstream mapstr;
 	if(fileStream.is_open()){
 		std::string line = "";
+		int count = 0;
 		while(getline(fileStream, line))
 		{
 			std::size_t found = line.find("#");
@@ -129,11 +131,25 @@ class Board	*Npuzzle::parse(char *path)
 				}
 				else
 				{
-
+					std::string item;
+    				std::stringstream sstr(line);
+					for(int x = 0; x < size; x++)
+					{
+						int nb;
+						sstr >> nb;
+						mapstr << nb;
+						if (count != size * size)
+							mapstr << " ";
+						count++;
+					}
 				}
 			}
 		}
 		fileStream.close();
+		if (count != size * size)
+			throw std::logic_error("Map no valid!");
+		std::cout << "Parsed Map: " << size << std::endl << mapstr.str() << std::endl;
+		return (new Board(size, mapstr.str().c_str()));
 	}
 	else
 		throw std::logic_error("Impossible to open map");
