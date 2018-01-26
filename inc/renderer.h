@@ -11,6 +11,7 @@ private:
 	float		_width;
 	float		_height;
 
+	void				mapCompare(std::vector<std::vector<int>> map0, std::vector<std::vector<int>> map1, int size, glm::ivec2 *pos, glm::ivec2 *dir);
 public:
 	Renderer(float width, float height);
 	~Renderer();

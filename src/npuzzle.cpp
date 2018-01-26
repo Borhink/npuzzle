@@ -124,15 +124,14 @@ class Board	*Npuzzle::parse(char *path)
 			if (found > 0)
 			{
 				std::string str = line.substr(0, found);
+				std::string item;
+				std::stringstream sstr(str);
 				if (!size)
 				{
-					size = std::stoi(str);
-					// std::cout << size << std::endl;
+					sstr >> size;
 				}
 				else
 				{
-					std::string item;
-    				std::stringstream sstr(line);
 					for(int x = 0; x < size; x++)
 					{
 						int nb;

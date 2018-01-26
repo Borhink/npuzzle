@@ -111,10 +111,16 @@ void				Renderer::loop(Npuzzle *npuzzle)
 
 	std::vector<glm::ivec2>			solvedMap = npuzzle->getSolvedMap();
 	std::vector<std::vector<int>>	map = board->getMap();
+	std::vector<std::vector<int>>	lastMap = map;
 	Astar 							*as = npuzzle->getAStar();
 	std::stack<class Node*> path;
 	bool					finish = false;
-	int 					sleepTime = 100000;
+	// int 					sleepTime = 100000;
+	const double			maxTimeAnim = 20.0;
+	double					sleepAnim = maxTimeAnim;
+	double					lastTime = glfwGetTime();
+	glm::ivec2				itemPos;
+	glm::ivec2				itemDir;
 	while (glfwGetKey(_window, GLFW_KEY_ESCAPE) != GLFW_PRESS
 		&& !glfwWindowShouldClose(_window))
 	{
@@ -129,6 +135,10 @@ void				Renderer::loop(Npuzzle *npuzzle)
 		texture->bind();
 		if (as == nullptr)
 			as = npuzzle->getAStar();
+		
+		double now = glfwGetTime();
+		double elapse = now - lastTime;
+
 		if (as != nullptr && as->isSolved())
 		{
 			if (path.empty() && !finish)
@@ -137,29 +147,40 @@ void				Renderer::loop(Npuzzle *npuzzle)
 				///////////// TRUC DEGUEULASSE A MOI ///////////
 				if (!path.empty())
 				{
-					sleepTime = 10000000 / path.size();
-					if (sleepTime > 1000000)
-						sleepTime = 1000000;
+					// sleepTime = 10000000 / path.size();
+					// if (sleepTime > 1000000)
+					// 	sleepTime = 1000000;
+					sleepAnim = maxTimeAnim / (double)path.size();
+					if (sleepAnim > maxTimeAnim)
+						sleepAnim = maxTimeAnim;
 				}
 				///////////// FIN TRUC DEGUEULASSE A MOI ///////////
 			}
-			if (!path.empty())
+			if (!path.empty() && elapse >= sleepAnim)
 			{
 				class Node *node = path.top();
 				class Node *parent = node->getParent();
 				class Board *board = node->getBoard();
+				lastMap = map;
 				map = board->getMap();
+				mapCompare(lastMap, map, mapSize, &itemPos, &itemDir);
 				path.pop();
 				if (path.empty())
 					finish = true;
+				lastTime += sleepAnim;
 			}
 		}
+		double pctMove = elapse / sleepAnim;
+		if (pctMove < 0.0)
+			pctMove = 0.0;
+		if (pctMove > 1.0)
+			pctMove = 1.0;
 		for (int y = 0; y < mapSize; y++)
 		{
 			for (int x = 0; x < mapSize; x++)
 			{
 				///////////// TRUC DEGUEULASSE A MOI ///////////
-				if (finish && map[y][x] == 0)
+				if (finish && map[y][x] == 0 && pctMove >= 1.0)
 				{
 					glm::ivec2 current = solvedMap[map[y][x]];
 					mainShader.uniform2fv((GLchar *)"pos", offsetx + x * renderScale, y * renderScale);
@@ -169,8 +190,15 @@ void				Renderer::loop(Npuzzle *npuzzle)
 				///////////// FIN TRUC DEGUEULASSE A MOI ///////////
 				if (map[y][x] != 0)
 				{
+					double	offx = 0.0f;
+					double	offy = 0.0f;
+					if (itemPos[0] == x && itemPos[1] == y)
+					{
+						offx = itemDir[0] * (1.0 - pctMove);
+						offy = itemDir[1] * (1.0 - pctMove);
+					}
 					glm::ivec2 current = solvedMap[map[y][x]];
-					mainShader.uniform2fv((GLchar *)"pos", offsetx + x * renderScale, y * renderScale);
+					mainShader.uniform2fv((GLchar *)"pos", offsetx + ((double)x + offx) * renderScale, ((double)y + offy) * renderScale);
 					mainShader.uniform2fv((GLchar *)"posTex", current[0] * textureScale, current[1] * textureScale);
 					mesh.render();
 				}
@@ -178,7 +206,38 @@ void				Renderer::loop(Npuzzle *npuzzle)
 		}
 	    glfwSwapBuffers(_window);
 	    glfwPollEvents();
-		usleep(sleepTime);
 	}
 	delete texture;
+}
+
+void				Renderer::mapCompare(std::vector<std::vector<int>> map0, std::vector<std::vector<int>> map1, int size, glm::ivec2 *pos, glm::ivec2 *dir)
+{
+	glm::ivec2	p2(-1, -1);
+	(*pos)[0] = -1;
+	(*pos)[1] = -1;
+	int ok = 0;
+	for (int y = 0; y < size; y++)
+	{
+		for (int x = 0; x < size; x++)
+		{
+			if (map0[y][x] == 0)
+			{
+				(*pos)[0] = x;
+				(*pos)[1] = y;
+				ok++;
+			}
+			if (map1[y][x] == 0)
+			{
+				p2[0] = x;
+				p2[1] = y;
+				ok++;
+			}
+			if (ok >= 2)
+				break;
+		}
+		if (ok >= 2)
+			break;
+	}
+	(*dir)[0] = p2[0] - (*pos)[0];
+	(*dir)[1] = p2[1] - (*pos)[1];
 }
