@@ -14,8 +14,13 @@ _checkParam(false), _displayGL(false)
 	this->parseArgs(ac, av);
 	if (_generate)
 		_board = this->generate();
-	_solvedMap.resize(_board->size() * _board->size(), glm::ivec2(0, 0));
-	_board->getSolvedPoints(_solvedMap);
+	if (!_solvedMap.size())
+	{
+		_solvedMap.resize(_board->size() * _board->size(), glm::ivec2(0, 0));
+		_board->getSolvedPoints(_solvedMap);
+	}
+	if (_solvedMap.size() != _board->size() * _board->size())
+		throw std::logic_error("Error: map and custom solution have a different size");
 	if (this->checkIfSolvable())
 	{
 		if (_displayGL)
@@ -98,6 +103,7 @@ void	Npuzzle::resolve(void)
 int	Npuzzle::parseArgs(int ac, char **av)
 {
 	int nb = 0;
+	class Board *tmp = NULL;
 
 	for (int i = 1; i < ac; i++)
 	{
@@ -125,9 +131,15 @@ int	Npuzzle::parseArgs(int ac, char **av)
 			_checkParam = true;
 		else if (std::string(av[i]) == "-d")
 			_displayGL = true;
+		else if (std::string(av[i]) == "-s" && i + 1 < ac && !_solvedMap.size())
+		{
+			tmp = this->parse(av[++i]);
+			_solvedMap.resize(tmp->size() * tmp->size(), glm::ivec2(0, 0));
+			tmp->getIvec2Map(_solvedMap);
+		}
 	}
 	if (!_board && !_generate)
-		throw std::logic_error("No map to solve");
+		throw std::logic_error("Error: No map to solve");
 	return (1);
 }
 
@@ -152,7 +164,7 @@ class Board	*Npuzzle::parse(char *path)
 				{
 					sstr >> size;
 					if (size < 3)
-						throw std::logic_error("Invalid size !");
+						throw std::logic_error("Error: Invalid size !");
 				}
 				else
 				{
@@ -161,7 +173,7 @@ class Board	*Npuzzle::parse(char *path)
 						int nb;
 						sstr >> nb;
 						if(sstr.fail())
-							throw std::logic_error("Invalid map !");
+							throw std::logic_error("Error: Invalid map !");
 						mapstr << nb;
 						if (count != size * size)
 							mapstr << " ";
@@ -172,13 +184,14 @@ class Board	*Npuzzle::parse(char *path)
 		}
 		fileStream.close();
 		if (count != size * size)
-			throw std::logic_error("Map no valid!");
+			throw std::logic_error("Error: Map no valid!");
 		std::cout << "Parsed Map: size " << size << std::endl << mapstr.str() << std::endl << std::endl;
 		return (new Board(size, mapstr.str().c_str()));
 	}
 	else
-		throw std::logic_error("Impossible to open map");
-	return (new Board(3, "6 3 5 2 1 7 0 8 4"));}
+		throw std::logic_error("Error: Impossible to open map");
+	return (new Board(3, "6 3 5 2 1 7 0 8 4"));
+}
 
 class Board *Npuzzle::generate(void)
 {

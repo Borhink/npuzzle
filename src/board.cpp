@@ -39,6 +39,20 @@ void Board::printMap(void) const
 	}
 }
 
+void Board::getIvec2Map(std::vector<glm::ivec2> &vec)
+{
+	int nb;
+
+	for (int y = 0; y < _size; y++)
+	{
+		for (int x = 0; x < _size; x++)
+		{
+			nb = _map[y][x];
+			vec[nb] = {x, y};
+		}
+	}
+}
+
 void Board::getSolvedPoints(std::vector<glm::ivec2> &map)
 {
 	this->generateSolvedPoints(map, _size, 0, 0, RIGHT, 1, 1);

@@ -20,7 +20,8 @@ public:
 	inline Board *getBoard(void) { return (_board); }
 	inline std::string &getHash(void) { return (_board->getHash()); }
 	inline std::vector<std::vector<int>> &getMap(void) { return (_board->getMap()); }
-	inline std::string &getMove(void) { return (this->_move); }
+	inline std::string &getMove(void) { return (_move); }
+	inline void setMove(std::string &move) { _move = move; }
 
 private:
 	class Node	*_parent;

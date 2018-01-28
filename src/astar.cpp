@@ -46,10 +46,10 @@ _check(check)
 			if (_check)
 			{
 				if (!parent || (parent && this->checkMoveValidity(board, parent->getBoard())))
-					std::cout << "MOVE OK" << std::endl;
-				else { std::cout << "WRONG MOVE" << std::endl; break; }
+					std::cout << "MOVE " GREEN "OK" EOC << std::endl;
+				else { std::cout << "MOVE " RED "KO" EOC << std::endl; break; }
 				if (parent && node->getCost() - 1 != parent->getCost())
-					{ std::cout << "WRONG MOVE" << std::endl; break; }
+					{ std::cout << "MOVE " RED "KO" EOC << std::endl; break; }
 			}
 			if (_verbose)
 				std::cout << "========================" << std::endl;
@@ -102,13 +102,8 @@ int	Astar::solve(void)
 				delete child;
 			else
 			{
-				if (open && open->getCost() > child->getCost())
-				{
-					open->setParent(child->getParent());
-					open->setCost(child->getCost());
-					open->setHeuristic(child->getHeuristic());
+				if (open)
 					delete child;
-				}
 				else
 				{
 					_opened.push(child);

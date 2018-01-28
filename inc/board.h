@@ -18,6 +18,7 @@ public:
 	~Board();
 	int										size() const;
 	void									printMap(void) const;
+	void 									getIvec2Map(std::vector<glm::ivec2> &vec);
 	void									getSolvedPoints(std::vector<glm::ivec2> &map);
 	inline std::vector<std::vector<int>>	&getMap(void) { return (_map); }
 	inline std::string						&getHash(void) { return (_hash); }
