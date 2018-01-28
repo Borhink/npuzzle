@@ -4,12 +4,15 @@
 
 #include <unistd.h>
 
-Astar::Astar(std::vector<glm::ivec2> &solvedMap, class Board *board) :
+Astar::Astar(std::vector<glm::ivec2> &solvedMap, class Board *board,\
+	int heuristicUsed, bool verbose, bool check) :
 _solvedMap(solvedMap),
 _timeComplexity(0),
 _sizeComplexity(1),
-_heuristicUsed(MANHATTAN | LINEAR_CONFLICT),
-_solved(false)
+_heuristicUsed(heuristicUsed),
+_solved(false),
+_verbose(verbose),
+_check(check)
 {
 	class Node *start = new class Node(0, this->countHeuristic(board), board);
 
@@ -21,6 +24,7 @@ _solved(false)
 		_solved = true;
 		std::stack<class Node*> path;
 		int i = 0, move;
+		std::stringstream sstream;
 
 		this->restorePath(path);
 		_sizeComplexity = _opened.size() + _closed.size();
@@ -30,25 +34,34 @@ _solved(false)
 			class Node *node = path.top();
 			class Node *parent = node->getParent();
 			class Board *board = node->getBoard();
-			std::cout << "Cost: " << node->getCost();
-			std::cout << ", Heuristic: " << node->getHeuristic() << std::endl;
-			board->printMap();
-			//////////////////////////////DEBUG//////////////////////////////////////////////
-			if (!parent || (parent && this->checkMoveValidity(board, parent->getBoard())))
-				std::cout << "MOVE OK" << std::endl;
-			else { std::cout << "WRONG MOVE" << std::endl; break; }
-			if (parent && node->getCost() - 1 != parent->getCost())
-				{ std::cout << "WRONG MOVE" << std::endl; break; }
-			std::cout << "========================" << std::endl;
-			//////////////////////////////////FIN DEBUG//////////////////////////////////////
+			if (parent)
+				sstream << node->getMove() << ", ";
+			if (_verbose)
+			{
+				std::cout << "Cost: " << node->getCost();
+				std::cout << ", Heuristic: " << node->getHeuristic() << std::endl;
+				board->printMap();
+				std::cout << "Movement : " << node->getMove() << std::endl;
+			}
+			if (_check)
+			{
+				if (!parent || (parent && this->checkMoveValidity(board, parent->getBoard())))
+					std::cout << "MOVE OK" << std::endl;
+				else { std::cout << "WRONG MOVE" << std::endl; break; }
+				if (parent && node->getCost() - 1 != parent->getCost())
+					{ std::cout << "WRONG MOVE" << std::endl; break; }
+			}
+			if (_verbose)
+				std::cout << "========================" << std::endl;
 			i++;
 			path.pop();
 		}
 		std::cout << "Time complexity: " << _timeComplexity << std::endl;
 		std::cout << "Size complexity: " << _sizeComplexity << std::endl;
-		std::cout << "Moves: " << move << std::endl;
 		_time = clock() - _time;
 		std::cout << "Time : " << (float)_time / CLOCKS_PER_SEC << "s" << std::endl;
+		std::cout << "Moves: " << move << std::endl;
+		std::cout << "Movements :" << std::endl << sstream.str().substr(0, sstream.str().size() - 2) << std::endl;
 	}
 }
 
@@ -126,28 +139,28 @@ void	Astar::searchChildren(class Node *node, t_node_prio_queue &children)
 					std::swap(map[y][x], map[y][x - 1]);
 					newBoard = new class Board(board->size(), map);
 					std::swap(map[y][x], map[y][x - 1]);
-					children.push(new class Node(node->getCost() + 1, this->countHeuristic(newBoard), newBoard, node));
+					children.push(new class Node(node->getCost() + 1, this->countHeuristic(newBoard), newBoard, node, GREEN "Left" EOC));
 				}
 				if (x < board->size() - 1)
 				{
 					std::swap(map[y][x], map[y][x + 1]);
 					newBoard = new class Board(board->size(), map);
 					std::swap(map[y][x], map[y][x + 1]);
-					children.push(new class Node(node->getCost() + 1, this->countHeuristic(newBoard), newBoard, node));
+					children.push(new class Node(node->getCost() + 1, this->countHeuristic(newBoard), newBoard, node, YELLOW "Right" EOC));
 				}
 				if (y > 0)
 				{
 					std::swap(map[y][x], map[y - 1][x]);
 					newBoard = new class Board(board->size(), map);
 					std::swap(map[y][x], map[y - 1][x]);
-					children.push(new class Node(node->getCost() + 1, this->countHeuristic(newBoard), newBoard, node));
+					children.push(new class Node(node->getCost() + 1, this->countHeuristic(newBoard), newBoard, node, MAGENTA "Up" EOC));
 				}
 				if (y < board->size() - 1)
 				{
 					std::swap(map[y][x], map[y + 1][x]);
 					newBoard = new class Board(board->size(), map);
 					std::swap(map[y][x], map[y + 1][x]);
-					children.push(new class Node(node->getCost() + 1, this->countHeuristic(newBoard), newBoard, node));
+					children.push(new class Node(node->getCost() + 1, this->countHeuristic(newBoard), newBoard, node, CYAN "Down" EOC));
 				}
 			}
 		}

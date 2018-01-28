@@ -19,6 +19,7 @@ public:
 	inline Board					*getBoard(void) { return (_board); }
 	inline std::vector<glm::ivec2>	&getSolvedMap(void) { return (_solvedMap); }
 	inline class Astar				*getAStar(void) { return (_astar); }
+	inline bool						getDisplayGL(void) { return (_displayGL); }
 
 private:
 	int								countInversions(int i, int j, std::vector<std::vector<int>> &map);
@@ -36,6 +37,10 @@ private:
 	bool							_generate;
 	int								_generateSize;
 	int								_generateParam;
+	int								_heuristicParam;
+	bool							_verboseParam;
+	bool							_checkParam;
+	bool							_displayGL;
 
 };
 

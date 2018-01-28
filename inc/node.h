@@ -8,7 +8,7 @@ class Node
 {
 public:
 	Node(int cost, int heuristic, class Board *board);
-	Node(int cost, int heuristic, class Board *board, class Node *parent);
+	Node(int cost, int heuristic, class Board *board, class Node *parent, std::string move);
 	~Node();
 	inline class Node *getParent(void) { return (_parent); }
 	inline void setParent(class Node *parent) { _parent = parent; }
@@ -20,12 +20,14 @@ public:
 	inline Board *getBoard(void) { return (_board); }
 	inline std::string &getHash(void) { return (_board->getHash()); }
 	inline std::vector<std::vector<int>> &getMap(void) { return (_board->getMap()); }
+	inline std::string &getMove(void) { return (this->_move); }
 
 private:
 	class Node	*_parent;
 	class Board	*_board;
 	int			_cost;
 	int			_heuristic;
+	std::string	_move;
 };
 
 #endif

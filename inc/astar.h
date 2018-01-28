@@ -5,15 +5,25 @@
 # include <map>
 # include <string>
 # include <stack>
+# include <sstream>
 # include "node.h"
 # include "struct.h"
 
-# define DIJKSTRA (1 << 0)
-# define MANHATTAN (1 << 1)
-# define LINEAR_CONFLICT (1 << 2)
-# define OUT_ROW_COLUMN (1 << 3)
-# define EUCLIDEAN (1 << 4)
-# define MISPLACED (1 << 5)
+
+# define MANHATTAN (1 << 0)
+# define LINEAR_CONFLICT (1 << 1)
+# define OUT_ROW_COLUMN (1 << 2)
+# define EUCLIDEAN (1 << 3)
+# define MISPLACED (1 << 4)
+# define DIJKSTRA (1 << 5)
+# define HEURISTIC_COUNT (1 << 6)
+
+#define GREEN "\033[32m"
+#define RED "\033[31m"
+#define YELLOW "\033[33m"
+#define MAGENTA "\033[35m"
+#define CYAN "\033[36m"
+#define EOC "\033[0m"
 
 class Board;
 
@@ -34,7 +44,8 @@ typedef std::priority_queue<class Node*, std::vector<class Node*>, NodeCompare> 
 class Astar
 {
 public:
-	Astar(std::vector<glm::ivec2> &solvedMap, class Board *board);
+	Astar(std::vector<glm::ivec2> &solvedMap, class Board *board,\
+		int heuristicUsed, bool verbose, bool check);
 	~Astar();
 	int solve(void);
 	inline bool		isSolved(void) { return (_solved); }
@@ -60,6 +71,8 @@ private:
 	unsigned long						_sizeComplexity;
 	int									_heuristicUsed;
 	bool								_solved;
+	bool								_verbose;
+	bool								_check;
 	std::clock_t						_time;
 };
 
