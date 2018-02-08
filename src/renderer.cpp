@@ -116,7 +116,7 @@ void				Renderer::loop(Npuzzle *npuzzle)
 	std::stack<class Node*> path;
 	bool					finish = false;
 	// int 					sleepTime = 100000;
-	const double			maxTimeAnim = 20.0;
+	const double			maxTimeAnim = npuzzle->getAnimInMS() / 1000.0f;
 	double					sleepAnim = maxTimeAnim;
 	double					lastTime = glfwGetTime();
 	glm::ivec2				itemPos;
@@ -134,7 +134,10 @@ void				Renderer::loop(Npuzzle *npuzzle)
 		glActiveTexture(GL_TEXTURE0);
 		texture->bind();
 		if (as == nullptr)
+		{
 			as = npuzzle->getAStar();
+			lastTime = glfwGetTime();
+		}
 		
 		double now = glfwGetTime();
 		double elapse = now - lastTime;
@@ -150,9 +153,10 @@ void				Renderer::loop(Npuzzle *npuzzle)
 					// sleepTime = 10000000 / path.size();
 					// if (sleepTime > 1000000)
 					// 	sleepTime = 1000000;
-					sleepAnim = maxTimeAnim / (double)path.size();
+					sleepAnim = maxTimeAnim; // (double)path.size();
 					if (sleepAnim > maxTimeAnim)
 						sleepAnim = maxTimeAnim;
+					elapse = now - lastTime;
 				}
 				///////////// FIN TRUC DEGUEULASSE A MOI ///////////
 			}
@@ -168,6 +172,7 @@ void				Renderer::loop(Npuzzle *npuzzle)
 				if (path.empty())
 					finish = true;
 				lastTime += sleepAnim;
+				elapse = now - lastTime;
 			}
 		}
 		double pctMove = elapse / sleepAnim;

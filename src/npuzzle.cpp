@@ -8,7 +8,7 @@
 Npuzzle::Npuzzle(int ac, char **av)
 : _board(NULL), _generate(false), _generateParam(0),
 _heuristicParam(MANHATTAN | LINEAR_CONFLICT), _verboseParam(false),
-_checkParam(false), _displayGL(false)
+_checkParam(false), _displayGL(false), _animInMS(250.0f)
 {
 	_astar = nullptr;
 	this->parseArgs(ac, av);
@@ -137,6 +137,9 @@ int	Npuzzle::parseArgs(int ac, char **av)
 			_solvedMap.resize(tmp->size() * tmp->size(), glm::ivec2(0, 0));
 			tmp->getIvec2Map(_solvedMap);
 		}
+		else if (std::string(av[i]) == "-a" && i + 1 < ac)
+			_animInMS = (float)atoi(av[++i]);
+		
 	}
 	if (!_board && !_generate)
 		throw std::logic_error("Error: No map to solve");
@@ -185,7 +188,7 @@ class Board	*Npuzzle::parse(char *path)
 		fileStream.close();
 		if (count != size * size)
 			throw std::logic_error("Error: Map no valid!");
-		std::cout << "Parsed Map: size " << size << std::endl << mapstr.str() << std::endl << std::endl;
+		// std::cout << "Parsed Map: size " << size << std::endl << mapstr.str() << std::endl << std::endl;
 		return (new Board(size, mapstr.str().c_str()));
 	}
 	else

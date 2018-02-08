@@ -22,6 +22,7 @@ int		main(int ac, char** av)
 		<< YELLOW "\t\t32 -> " EOC "Dijkstra (cant be combined)" << std::endl\
 		<< YELLOW "\t-v :" EOC " verbose print" << std::endl\
 		<< YELLOW "\t-d :" EOC " render displayed with openGL" << std::endl\
+		<< YELLOW "\t\t-a [time] :" EOC " time by animation in ms " << std::endl\
 		<< YELLOW "\t-c :" EOC " check move validity at end" << std::endl\
 		<< YELLOW "\t-s [filename] :" EOC " custom solution for the map" << std::endl;
 	}

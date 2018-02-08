@@ -20,7 +20,7 @@ public:
 	inline std::vector<glm::ivec2>	&getSolvedMap(void) { return (_solvedMap); }
 	inline class Astar				*getAStar(void) { return (_astar); }
 	inline bool						getDisplayGL(void) { return (_displayGL); }
-
+	inline float					getAnimInMS(void) { return (_animInMS); }
 private:
 	int								countInversions(int i, int j, std::vector<std::vector<int>> &map);
 	bool							checkIfSolvable(void);
@@ -41,6 +41,7 @@ private:
 	bool							_verboseParam;
 	bool							_checkParam;
 	bool							_displayGL;
+	float							_animInMS;
 
 };
 
